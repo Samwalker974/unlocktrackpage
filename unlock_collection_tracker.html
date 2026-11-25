@@ -1,393 +1,695 @@
 <!DOCTYPE html>
-<html lang="fr" class="dark">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unlock! Collection & Tracker</title>
+    <title>unlocktrackpage</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome pour les icônes -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+    <!-- Google Fonts: Outfit (titre UNLOCK! style) & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <script>
+        (function() {
+            try {
+                if (localStorage.getItem('unlock_tracker_theme') === 'dark') {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {}
+        })();
+
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', '-apple-system', 'sans-serif'],
                         display: ['Outfit', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
+
     <style>
-        /* Ambiance Vault / Escape Room */
+        /* =========================================================
+           THÈME JOUR (Crème foncé & Marron) / NUIT (Marron foncé & Noyer)
+           ========================================================= */
+        :root {
+            --bg-page: #e4d2b4;
+            --bg-page-glow-1: rgba(255, 248, 232, 0.45);
+            --bg-page-glow-2: rgba(176, 126, 70, 0.16);
+            --bg-surface: #efe2ca;
+            --bg-raised: #f6ede0;
+            --bg-stage: #dcc8a5;
+            --border-subtle: rgba(118, 82, 46, 0.22);
+            --border-strong: rgba(98, 66, 34, 0.38);
+
+            --text-primary: #271a10;
+            --text-title-sub: #6b523b;
+            --text-secondary: #563e29;
+            --text-muted: #7a5e44;
+
+            /* Badge année titre style UNLOCK! */
+            --year-pill-bg: rgba(217, 119, 6, 0.14);
+            --year-pill-border: rgba(180, 83, 9, 0.40);
+            --year-pill-text: #92400e;
+            --bang-color: #d97706;
+
+            /* Ligne d'étagère bibliothèque propre et fine */
+            --shelf-surface: rgba(247, 238, 222, 0.52);
+            --shelf-top-plane: linear-gradient(180deg, rgba(162, 117, 72, 0.18) 0%, rgba(145, 100, 56, 0.42) 100%);
+            --shelf-bar: linear-gradient(180deg, #8e633d 0%, #6d4829 65%, #55361d 100%);
+            --shelf-bar-highlight: rgba(255, 236, 204, 0.34);
+            --shelf-bar-shadow: 0 7px 14px -3px rgba(56, 34, 14, 0.34);
+            --floor-shadow: rgba(54, 32, 12, 0.38);
+
+            /* Glassmorphism base */
+            --header-glass: rgba(235, 218, 190, 0.82);
+            --glass-bg: rgba(255, 249, 238, 0.56);
+            --glass-bg-hover: rgba(255, 252, 245, 0.80);
+            --glass-border: rgba(130, 92, 52, 0.24);
+            --glass-highlight: rgba(255, 255, 255, 0.82);
+            --glass-shadow: 0 4px 14px -2px rgba(64, 38, 14, 0.12), inset 0 1px 0 var(--glass-highlight);
+
+            /* Couleurs de boutons glassmorphism (Jour) */
+            --btn-amber-bg: rgba(245, 158, 11, 0.16);
+            --btn-amber-hover: rgba(245, 158, 11, 0.28);
+            --btn-amber-border: rgba(180, 83, 9, 0.35);
+            --btn-amber-text: #854d0e;
+
+            --btn-indigo-bg: rgba(99, 102, 241, 0.14);
+            --btn-indigo-hover: rgba(99, 102, 241, 0.24);
+            --btn-indigo-border: rgba(79, 70, 229, 0.32);
+            --btn-indigo-text: #3730a3;
+
+            --btn-emerald-bg: rgba(16, 185, 129, 0.15);
+            --btn-emerald-hover: rgba(16, 185, 129, 0.26);
+            --btn-emerald-border: rgba(5, 150, 105, 0.35);
+            --btn-emerald-text: #065f46;
+
+            --btn-sky-bg: rgba(14, 165, 233, 0.15);
+            --btn-sky-hover: rgba(14, 165, 233, 0.26);
+            --btn-sky-border: rgba(2, 132, 199, 0.34);
+            --btn-sky-text: #075985;
+
+            --btn-lime-bg: rgba(101, 163, 13, 0.15);
+            --btn-lime-hover: rgba(101, 163, 13, 0.26);
+            --btn-lime-border: rgba(77, 124, 15, 0.34);
+            --btn-lime-text: #3f6212;
+
+            --btn-rose-bg: rgba(225, 29, 72, 0.14);
+            --btn-rose-hover: rgba(225, 29, 72, 0.24);
+            --btn-rose-border: rgba(190, 18, 60, 0.32);
+            --btn-rose-text: #9f1239;
+
+            --done-bg: rgba(16, 185, 129, 0.14);
+            --done-border: rgba(5, 150, 105, 0.34);
+            --done-text: #065f46;
+            --done-solid: #10b981;
+
+            --prog-bg: rgba(245, 158, 11, 0.16);
+            --prog-border: rgba(217, 119, 6, 0.38);
+            --prog-text: #92400e;
+
+            --star-on: #d97706;
+            --star-off: #cab594;
+        }
+
+        html.dark {
+            --bg-page: #18110c;
+            --bg-page-glow-1: rgba(132, 86, 46, 0.16);
+            --bg-page-glow-2: rgba(245, 158, 11, 0.06);
+            --bg-surface: #231912;
+            --bg-raised: #2d2017;
+            --bg-stage: #150e09;
+            --border-subtle: rgba(206, 162, 114, 0.16);
+            --border-strong: rgba(222, 178, 128, 0.30);
+
+            --text-primary: #f7efe2;
+            --text-title-sub: #c6b29a;
+            --text-secondary: #cbb59b;
+            --text-muted: #937d64;
+
+            /* Badge année titre style UNLOCK! */
+            --year-pill-bg: rgba(245, 158, 11, 0.14);
+            --year-pill-border: rgba(245, 158, 11, 0.42);
+            --year-pill-text: #fcd34d;
+            --bang-color: #fbbf24;
+
+            /* Ligne d'étagère bibliothèque nuit */
+            --shelf-surface: rgba(36, 26, 18, 0.56);
+            --shelf-top-plane: linear-gradient(180deg, rgba(114, 78, 48, 0.18) 0%, rgba(92, 62, 38, 0.46) 100%);
+            --shelf-bar: linear-gradient(180deg, #5c3f28 0%, #432c1b 68%, #2c1b0f 100%);
+            --shelf-bar-highlight: rgba(255, 232, 198, 0.20);
+            --shelf-bar-shadow: 0 10px 18px -2px rgba(0, 0, 0, 0.68);
+            --floor-shadow: rgba(0, 0, 0, 0.78);
+
+            /* Glassmorphism base nuit */
+            --header-glass: rgba(26, 19, 13, 0.82);
+            --glass-bg: rgba(54, 39, 27, 0.52);
+            --glass-bg-hover: rgba(74, 54, 38, 0.72);
+            --glass-border: rgba(214, 174, 128, 0.18);
+            --glass-highlight: rgba(255, 236, 208, 0.12);
+            --glass-shadow: 0 6px 18px -4px rgba(0, 0, 0, 0.48), inset 0 1px 0 var(--glass-highlight);
+
+            /* Couleurs de boutons glassmorphism (Nuit) */
+            --btn-amber-bg: rgba(245, 158, 11, 0.18);
+            --btn-amber-hover: rgba(245, 158, 11, 0.30);
+            --btn-amber-border: rgba(251, 191, 36, 0.36);
+            --btn-amber-text: #fcd34d;
+
+            --btn-indigo-bg: rgba(129, 140, 248, 0.18);
+            --btn-indigo-hover: rgba(129, 140, 248, 0.30);
+            --btn-indigo-border: rgba(165, 180, 252, 0.34);
+            --btn-indigo-text: #c7d2fe;
+
+            --btn-emerald-bg: rgba(16, 185, 129, 0.18);
+            --btn-emerald-hover: rgba(16, 185, 129, 0.30);
+            --btn-emerald-border: rgba(52, 211, 153, 0.34);
+            --btn-emerald-text: #6ee7b7;
+
+            --btn-sky-bg: rgba(56, 189, 248, 0.18);
+            --btn-sky-hover: rgba(56, 189, 248, 0.30);
+            --btn-sky-border: rgba(125, 211, 252, 0.34);
+            --btn-sky-text: #7dd3fc;
+
+            --btn-lime-bg: rgba(132, 204, 22, 0.18);
+            --btn-lime-hover: rgba(132, 204, 22, 0.30);
+            --btn-lime-border: rgba(163, 230, 53, 0.34);
+            --btn-lime-text: #bef264;
+
+            --btn-rose-bg: rgba(244, 63, 94, 0.18);
+            --btn-rose-hover: rgba(244, 63, 94, 0.30);
+            --btn-rose-border: rgba(251, 113, 133, 0.34);
+            --btn-rose-text: #fda4af;
+
+            --done-bg: rgba(16, 185, 129, 0.18);
+            --done-border: rgba(52, 211, 153, 0.36);
+            --done-text: #6ee7b7;
+            --done-solid: #34d399;
+
+            --prog-bg: rgba(245, 158, 11, 0.18);
+            --prog-border: rgba(251, 191, 36, 0.38);
+            --prog-text: #fcd34d;
+
+            --star-on: #fbbf24;
+            --star-off: #4c392a;
+        }
+
         body {
-            background-color: #070a11;
-            background-image: 
-                radial-gradient(circle at 12% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 42%),
-                radial-gradient(circle at 88% 8%, rgba(16, 185, 129, 0.06) 0%, transparent 40%),
-                radial-gradient(circle at 50% 100%, rgba(56, 189, 248, 0.05) 0%, transparent 50%);
+            background-color: var(--bg-page);
+            background-image:
+                radial-gradient(ellipse 85% 40% at 15% 0%, var(--bg-page-glow-1) 0%, transparent 65%),
+                radial-gradient(ellipse 70% 45% at 88% 100%, var(--bg-page-glow-2) 0%, transparent 65%);
             background-attachment: fixed;
+            color: var(--text-primary);
+            transition: background-color 0.22s ease, color 0.22s ease;
         }
 
-        /* Barre de défilement raffinée */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #070a11;
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-page); }
         ::-webkit-scrollbar-thumb {
-            background: #1e293b;
+            background: var(--border-strong);
             border-radius: 9999px;
-            border: 2px solid #070a11;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #334155;
         }
 
-        /* Micro-interactions étoiles & cartes */
-        .star-btn {
-            transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.15s ease;
-        }
-        .star-btn:hover {
-            transform: scale(1.22);
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* =========================================================
+           BOUTONS GLASSMORPHISM COLORÉS
+           ========================================================= */
+        .glass-header {
+            background: var(--header-glass);
+            backdrop-filter: blur(16px) saturate(140%);
+            -webkit-backdrop-filter: blur(16px) saturate(140%);
+            border-bottom: 1px solid var(--glass-border);
         }
 
-        /* Masquer la barre de défilement horizontale des filtres sur mobile */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px) saturate(130%);
+            -webkit-backdrop-filter: blur(12px) saturate(130%);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
         }
 
-        .vault-card {
-            background: linear-gradient(165deg, rgba(15, 23, 42, 0.82) 0%, rgba(9, 13, 24, 0.94) 100%);
+        .gbtn {
+            backdrop-filter: blur(12px) saturate(145%);
+            -webkit-backdrop-filter: blur(12px) saturate(145%);
+            box-shadow: var(--glass-shadow);
+            transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.14s ease, box-shadow 0.18s ease;
+        }
+        .gbtn:hover { transform: translateY(-1px); }
+        .gbtn:active { transform: translateY(0) scale(0.97); }
+
+        .gbtn-neutral {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+        }
+        .gbtn-neutral:hover {
+            background: var(--glass-bg-hover);
+            color: var(--text-primary);
+        }
+
+        .gbtn-amber {
+            background: var(--btn-amber-bg);
+            border: 1px solid var(--btn-amber-border);
+            color: var(--btn-amber-text);
+        }
+        .gbtn-amber:hover { background: var(--btn-amber-hover); }
+
+        .gbtn-indigo {
+            background: var(--btn-indigo-bg);
+            border: 1px solid var(--btn-indigo-border);
+            color: var(--btn-indigo-text);
+        }
+        .gbtn-indigo:hover { background: var(--btn-indigo-hover); }
+
+        .gbtn-emerald {
+            background: var(--btn-emerald-bg);
+            border: 1px solid var(--btn-emerald-border);
+            color: var(--btn-emerald-text);
+        }
+        .gbtn-emerald:hover { background: var(--btn-emerald-hover); }
+
+        .gbtn-sky {
+            background: var(--btn-sky-bg);
+            border: 1px solid var(--btn-sky-border);
+            color: var(--btn-sky-text);
+        }
+        .gbtn-sky:hover { background: var(--btn-sky-hover); }
+
+        .gbtn-lime {
+            background: var(--btn-lime-bg);
+            border: 1px solid var(--btn-lime-border);
+            color: var(--btn-lime-text);
+        }
+        .gbtn-lime:hover { background: var(--btn-lime-hover); }
+
+        .gbtn-rose {
+            background: var(--btn-rose-bg);
+            border: 1px solid var(--btn-rose-border);
+            color: var(--btn-rose-text);
+        }
+        .gbtn-rose:hover { background: var(--btn-rose-hover); }
+
+        /* États actifs colorés glassmorphism (lumineux et vifs) */
+        .gbtn-solid-amber {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.92), rgba(217, 119, 6, 0.92));
+            border: 1px solid rgba(254, 243, 199, 0.45);
+            color: #1c1208;
+            box-shadow: 0 6px 16px -3px rgba(217, 119, 6, 0.40), inset 0 1px 0 rgba(255, 251, 235, 0.55);
+        }
+        .gbtn-solid-sky {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.92), rgba(2, 132, 199, 0.92));
+            border: 1px solid rgba(224, 242, 254, 0.45);
+            color: #ffffff;
+            box-shadow: 0 6px 16px -3px rgba(2, 132, 199, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+        }
+        .gbtn-solid-lime {
+            background: linear-gradient(135deg, rgba(132, 204, 22, 0.92), rgba(77, 124, 15, 0.92));
+            border: 1px solid rgba(236, 252, 203, 0.45);
+            color: #ffffff;
+            box-shadow: 0 6px 16px -3px rgba(77, 124, 15, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+        }
+        .gbtn-solid-emerald {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.92), rgba(5, 150, 105, 0.92));
+            border: 1px solid rgba(209, 250, 229, 0.45);
+            color: #ffffff;
+            box-shadow: 0 6px 16px -3px rgba(5, 150, 105, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+        }
+        .gbtn-solid-brown {
+            background: linear-gradient(135deg, rgba(107, 68, 35, 0.92), rgba(74, 45, 22, 0.94));
+            border: 1px solid rgba(255, 236, 206, 0.35);
+            color: #faf3e6;
+            box-shadow: 0 6px 16px -3px rgba(54, 30, 12, 0.38), inset 0 1px 0 rgba(255, 242, 220, 0.35);
+        }
+
+        .glass-input {
+            background: var(--glass-bg);
             backdrop-filter: blur(12px);
-            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease, border-color 0.28s ease;
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            box-shadow: inset 0 1px 2px rgba(40, 22, 8, 0.06), 0 1px 0 var(--glass-highlight);
+            transition: background 0.18s ease, border-color 0.18s ease;
         }
-        .vault-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 22px 40px -12px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08);
+        .glass-input::placeholder { color: var(--text-muted); }
+        .glass-input:focus {
+            outline: none;
+            background: var(--glass-bg-hover);
+            border-color: var(--bang-color);
         }
 
-        /* Reflet subtil sur les boîtes 3D */
-        .box-gloss {
-            background: linear-gradient(125deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.04) 36%, transparent 55%, rgba(0,0,0,0.28) 100%);
+        /* =========================================================
+           LIGNES DE BIBLIOTHÈQUE PROPRES + OMBRES 3/4 NATURELLES
+           ========================================================= */
+        .shelf-section-wrap {
+            background: var(--shelf-surface);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: var(--glass-shadow);
+            overflow: hidden;
+        }
+
+        /* Ligne d'étagère fine, soignée, bien rangée, avec profondeur douce */
+        .shelf-line-plane {
+            height: 16px;
+            margin-top: -12px;
+            background: var(--shelf-top-plane);
+            position: relative;
+            z-index: 1;
+        }
+        .shelf-line-bar {
+            height: 11px;
+            background: var(--shelf-bar);
+            border-top: 1px solid var(--shelf-bar-highlight);
+            box-shadow: var(--shelf-bar-shadow);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Boîte 3/4 + ombre elliptique qui la pose en douceur SUR la profondeur de l'étagère */
+        .shelf-box {
+            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+            transform-origin: center bottom;
+            position: relative;
+            z-index: 3;
+        }
+        .shelf-box:hover {
+            transform: translateY(-9px) scale(1.04);
+            z-index: 20;
+        }
+
+        .ground-shadow {
+            width: 74%;
+            height: 12px;
+            margin-top: -5px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at center, var(--floor-shadow) 0%, transparent 72%);
+            transition: transform 0.28s ease, opacity 0.28s ease;
+        }
+        .shelf-box:hover .ground-shadow {
+            transform: scale(0.86);
+            opacity: 0.65;
+        }
+
+        .packshot-img {
+            filter: drop-shadow(-4px 6px 6px rgba(24, 13, 4, 0.28));
+        }
+
+        .star-btn {
+            transition: transform 0.14s ease, color 0.14s ease;
+        }
+        .star-btn:hover { transform: scale(1.2); }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(10px) scale(0.985); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .modal-animate {
+            animation: modalIn 0.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
     </style>
 </head>
-<body class="text-slate-100 font-sans min-h-screen flex flex-col selection:bg-amber-400 selection:text-slate-950 antialiased">
+<body class="font-sans min-h-screen flex flex-col antialiased">
 
-    <!-- En-tête Glassmorphism Sticky (z-30) -->
-    <header class="sticky top-0 z-30 bg-[#070a11]/85 backdrop-blur-xl border-b border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.55)]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3.5">
-                
-                <!-- Identité & Logo -->
-                <div class="flex items-center gap-3.5">
-                    <div class="relative w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-300 via-amber-500 to-orange-600 p-[1px] shadow-lg shadow-amber-500/20 shrink-0">
-                        <div class="w-full h-full rounded-2xl bg-slate-950/90 flex items-center justify-center text-amber-400 text-xl">
-                            <i class="fa-solid fa-key"></i>
-                        </div>
+    <!-- En-tête Glassmorphism avec titre style UNLOCK! -->
+    <header class="sticky top-0 z-30 glass-header">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+
+                <!-- Titre exact style UNLOCK! (Outfit Black + ! ambre + badge 2017–2026 + sous-titre) -->
+                <div>
+                    <div class="flex items-center gap-2.5 flex-wrap">
+                        <h1 class="font-display text-2xl sm:text-[26px] leading-none tracking-tight">
+                            <span class="font-black" style="color: var(--text-primary);">UNLOCK</span><span class="font-black" style="color: var(--bang-color);">!</span>
+                            <span class="font-semibold ml-1" style="color: var(--text-title-sub);">TrackPage</span>
+                        </h1>
+                        <span
+                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-display font-bold tracking-wider border"
+                            style="background: var(--year-pill-bg); border-color: var(--year-pill-border); color: var(--year-pill-text);"
+                        >
+                            2017 – 2026
+                        </span>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h1 class="font-display text-xl sm:text-2xl font-black tracking-tight text-white">
-                                UNLOCK<span class="text-amber-400">!</span> <span class="font-semibold text-slate-300">Collection & Tracker</span>
-                            </h1>
-                            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-300 border border-amber-500/25">
-                                2017 – 2026
-                            </span>
-                        </div>
-                        <p class="text-xs text-slate-400">Suivez vos scénarios Escape Game, vos notes et vos jaquettes officielles</p>
-                    </div>
+                    <p class="text-xs mt-1" style="color: var(--text-muted);">
+                        Suivez vos scénarios Escape Game, vos notes et votre collection
+                    </p>
                 </div>
 
-                <!-- Actions globales : Import dossier jaquettes, Sauvegarde JSON, Réinitialisation -->
+                <!-- Compteurs compacts + boutons glassmorphism colorés -->
                 <div class="flex flex-wrap items-center gap-2">
-                    <label 
-                        title="Sélectionnez le dossier jaquettes_unlock généré par le script Python"
-                        class="px-3.5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 flex items-center gap-2 cursor-pointer transition shadow-lg shadow-amber-500/20 active:scale-95"
-                    >
-                        <i class="fa-solid fa-folder-open"></i>
-                        <span>Charger dossier jaquettes</span>
-                        <input type="file" webkitdirectory directory multiple accept="image/*" class="hidden" onchange="handleFolderUpload(event)">
-                    </label>
+                    <div class="hidden xl:flex items-center gap-2.5 text-xs px-3 py-2 rounded-xl glass-panel" style="color: var(--text-secondary);">
+                        <span><strong id="stat-boxes-done" style="color: var(--done-solid);">0</strong><span id="stat-boxes-total" style="color: var(--text-muted);">/37</span> boîtes</span>
+                        <span style="color: var(--border-strong);">·</span>
+                        <span><strong id="stat-scenarios-done" style="color: var(--text-primary);">0</strong><span id="stat-scenarios-total" style="color: var(--text-muted);">/81</span> scénarios</span>
+                        <span style="color: var(--border-strong);">·</span>
+                        <span class="flex items-center gap-1">
+                            <i class="fa-solid fa-star text-[10px]" style="color: var(--star-on);"></i>
+                            <strong id="stat-avg-rating" style="color: var(--text-primary);">–</strong>
+                        </span>
+                        <span style="color: var(--border-strong);">·</span>
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-12 h-1.5 rounded-full overflow-hidden" style="background-color: var(--border-subtle);">
+                                <div id="progress-bar" class="h-full rounded-full transition-all duration-300" style="width: 0%; background-color: var(--done-solid);"></div>
+                            </div>
+                            <span id="progress-percent" class="font-bold text-[11px]" style="color: var(--text-primary);">0%</span>
+                        </div>
+                    </div>
 
-                    <button 
+                    <!-- Bouton Mode Nuit / Jour (Indigo en jour, Ambre en nuit) -->
+                    <button
+                        type="button"
+                        id="theme-toggle-btn"
+                        onclick="toggleTheme()"
+                        title="Basculer entre mode jour et mode nuit"
+                        class="gbtn gbtn-indigo px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+                    >
+                        <i id="theme-toggle-icon" class="fa-solid fa-moon text-[11px]"></i>
+                        <span id="theme-toggle-label">Nuit</span>
+                    </button>
+
+                    <!-- Exporter (Émeraude glass) -->
+                    <button
                         type="button"
                         onclick="exportBackup()"
-                        title="Télécharger une sauvegarde JSON de votre progression et vos notes"
-                        class="px-3 py-2 rounded-xl text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.09] text-slate-200 border border-white/10 flex items-center gap-1.5 transition"
+                        title="Exporter la progression en JSON"
+                        class="gbtn gbtn-emerald px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer"
                     >
-                        <i class="fa-solid fa-download text-emerald-400"></i>
+                        <i class="fa-solid fa-download text-[11px]"></i>
                         <span>Exporter</span>
                     </button>
 
-                    <label 
-                        title="Restaurer une sauvegarde JSON"
-                        class="px-3 py-2 rounded-xl text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.09] text-slate-200 border border-white/10 flex items-center gap-1.5 cursor-pointer transition"
+                    <!-- Importer (Bleu ciel glass) -->
+                    <label
+                        title="Importer une sauvegarde JSON"
+                        class="gbtn gbtn-sky px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer"
                     >
-                        <i class="fa-solid fa-upload text-sky-400"></i>
+                        <i class="fa-solid fa-upload text-[11px]"></i>
                         <span class="hidden sm:inline">Importer</span>
                         <input type="file" accept=".json,application/json" class="hidden" onchange="importBackup(event)">
                     </label>
 
-                    <button 
+                    <!-- Réinitialiser (Rose glass) -->
+                    <button
                         type="button"
                         onclick="openResetModal()"
-                        title="Réinitialiser toutes les cases et notes"
-                        class="px-3 py-2 rounded-xl text-xs font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 flex items-center gap-1.5 transition"
+                        title="Tout remettre à zéro"
+                        class="gbtn gbtn-rose px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer"
                     >
-                        <i class="fa-solid fa-rotate-left"></i>
+                        <i class="fa-solid fa-rotate-left text-[11px]"></i>
                         <span class="hidden md:inline">Réinitialiser</span>
                     </button>
                 </div>
             </div>
+
+            <!-- Compteurs compacts sur écrans < xl -->
+            <div class="flex xl:hidden items-center justify-between gap-2 text-[11px] mt-2.5 pt-2 border-t" style="border-color: var(--border-subtle); color: var(--text-secondary);">
+                <span><strong id="m-stat-boxes">0/37</strong> boîtes</span>
+                <span><strong id="m-stat-scenarios">0/81</strong> scénarios</span>
+                <span><i class="fa-solid fa-star text-[9px] mr-0.5" style="color: var(--star-on);"></i><strong id="m-stat-rating">–</strong></span>
+                <span class="font-bold" id="m-stat-percent" style="color: var(--done-solid);">0%</span>
+            </div>
         </div>
     </header>
 
-    <!-- Tableau de bord KPI Bento (dynamique selon le filtre actif) -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2 w-full">
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-            <!-- KPI 1 : Boîtes terminées -->
-            <div class="bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex items-center justify-between">
-                <div>
-                    <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Boîtes terminées</p>
-                    <div class="mt-1 flex items-baseline gap-1.5">
-                        <span id="stat-boxes-done" class="font-display text-2xl sm:text-3xl font-extrabold text-emerald-400">0</span>
-                        <span id="stat-boxes-total" class="text-xs font-semibold text-slate-500">/ 37</span>
-                    </div>
-                </div>
-                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                    <i class="fa-solid fa-box-archive text-base"></i>
-                </div>
-            </div>
-
-            <!-- KPI 2 : Scénarios joués -->
-            <div class="bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex items-center justify-between">
-                <div>
-                    <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Scénarios joués</p>
-                    <div class="mt-1 flex items-baseline gap-1.5">
-                        <span id="stat-scenarios-done" class="font-display text-2xl sm:text-3xl font-extrabold text-amber-400">0</span>
-                        <span id="stat-scenarios-total" class="text-xs font-semibold text-slate-500">/ 81</span>
-                    </div>
-                </div>
-                <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
-                    <i class="fa-solid fa-puzzle-piece text-base"></i>
-                </div>
-            </div>
-
-            <!-- KPI 3 : Note moyenne -->
-            <div class="bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex items-center justify-between">
-                <div>
-                    <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Note moyenne</p>
-                    <div class="mt-1 flex items-baseline gap-1.5">
-                        <span id="stat-avg-rating" class="font-display text-2xl sm:text-3xl font-extrabold text-white">-</span>
-                        <span class="text-xs font-semibold text-amber-400">/ 5 <i class="fa-solid fa-star text-[10px]"></i></span>
-                    </div>
-                </div>
-                <div class="w-10 h-10 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-300">
-                    <i class="fa-solid fa-award text-base"></i>
-                </div>
-            </div>
-
-            <!-- KPI 4 : Progression globale -->
-            <div class="bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex flex-col justify-between">
-                <div class="flex items-center justify-between gap-2">
-                    <p id="progress-label" class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 truncate">Progression globale</p>
-                    <span id="progress-percent" class="font-display text-lg font-extrabold text-emerald-400">0%</span>
-                </div>
-                <div class="mt-2.5 w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-white/5 p-0.5">
-                    <div id="progress-bar" class="h-full rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-emerald-400 transition-all duration-500 ease-out" style="width: 0%"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Barre de contrôle : Recherche, Tri, Mode d'affichage & Filtres -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 w-full">
-        <div class="bg-slate-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex flex-col gap-4 shadow-xl">
-            
-            <!-- Ligne 1 : Recherche pleine largeur + Tri + Sélecteur Vue -->
-            <div class="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center">
-                <!-- Champ de recherche -->
+    <!-- Barre de contrôle : Recherche, Tri, Vue & Filtres colorés glassmorphism -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-3 w-full">
+        <div class="flex flex-col gap-3">
+            <!-- Ligne 1 : Recherche + Tri + Switcher Vue -->
+            <div class="flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
                 <div class="relative flex-1">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                    <input 
-                        type="text" 
-                        id="search-input" 
-                        placeholder="Rechercher une boîte Unlock!, un scénario (ex: Noside, Sherlock, Star Wars) ou une année..." 
-                        class="w-full bg-slate-950/90 border border-white/10 rounded-xl pl-11 pr-10 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-400/70 focus:ring-2 focus:ring-amber-400/20 transition"
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-xs" style="color: var(--text-muted);"></i>
+                    <input
+                        type="text"
+                        id="search-input"
+                        placeholder="Rechercher une boîte, un scénario (Noside, Sherlock, Star Wars) ou une année…"
+                        class="glass-input w-full rounded-xl pl-9 pr-9 py-2.5 text-sm"
                     >
-                    <button 
-                        type="button" 
-                        id="clear-search-btn" 
+                    <button
+                        type="button"
+                        id="clear-search-btn"
                         onclick="clearSearch()"
-                        class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-200 p-1"
-                        title="Effacer la recherche"
+                        class="hidden absolute right-3 top-1/2 -translate-y-1/2 p-1 text-xs cursor-pointer"
+                        style="color: var(--text-muted);"
+                        title="Effacer"
                     >
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
 
-                <div class="flex flex-wrap sm:flex-nowrap items-center gap-2.5">
-                    <!-- Menu de Tri -->
-                    <div class="flex items-center gap-2 flex-1 sm:flex-initial bg-slate-950/90 px-3.5 py-2 rounded-xl border border-white/10">
-                        <i class="fa-solid fa-arrow-down-wide-short text-amber-400 text-xs"></i>
-                        <select id="sort-select" class="bg-transparent text-xs font-medium text-slate-200 focus:outline-none cursor-pointer w-full">
-                            <option value="year-asc" class="bg-slate-900">Chronologique (Ancien → Récent)</option>
-                            <option value="year-desc" class="bg-slate-900">Chronologique (Récent → Ancien)</option>
-                            <option value="rating-desc" class="bg-slate-900">Note décroissante</option>
-                            <option value="progress-desc" class="bg-slate-900">Progression</option>
-                            <option value="alpha" class="bg-slate-900">Ordre alphabétique</option>
-                        </select>
-                    </div>
+                <div class="flex items-center gap-2">
+                    <select id="sort-select" class="glass-input rounded-xl px-3.5 py-2.5 text-xs font-semibold cursor-pointer flex-1 sm:flex-initial">
+                        <option value="year-asc">Ancien → Récent</option>
+                        <option value="year-desc">Récent → Ancien</option>
+                        <option value="rating-desc">Mieux notées</option>
+                        <option value="progress-desc">Progression</option>
+                        <option value="alpha">Alphabétique</option>
+                    </select>
 
-                    <!-- Sélecteur Vue Horizontale / Vue Grille -->
-                    <div class="flex items-center gap-1 bg-slate-950/90 p-1 rounded-xl border border-white/10 shrink-0">
-                        <button 
-                            type="button" 
-                            id="layout-horizontal-btn" 
-                            onclick="setLayoutMode('horizontal')" 
-                            class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-400 text-slate-950 flex items-center gap-1.5 transition shadow-sm"
+                    <!-- Switcher Étagères / Fiches -->
+                    <div class="flex items-center gap-1 rounded-xl p-1 glass-panel shrink-0">
+                        <button
+                            type="button"
+                            id="layout-shelf-btn"
+                            onclick="setLayoutMode('shelf')"
+                            class="gbtn px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 cursor-pointer"
                         >
-                            <i class="fa-solid fa-table-list"></i>
-                            <span class="hidden sm:inline">Vue Horizontale</span>
-                            <span class="sm:hidden">Liste</span>
+                            <i class="fa-solid fa-table-cells-large text-[11px]"></i>
+                            <span>Étagères</span>
                         </button>
-                        <button 
-                            type="button" 
-                            id="layout-grid-btn" 
-                            onclick="setLayoutMode('grid')" 
-                            class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition"
+                        <button
+                            type="button"
+                            id="layout-cards-btn"
+                            onclick="setLayoutMode('cards')"
+                            class="gbtn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
                         >
-                            <i class="fa-solid fa-grip"></i>
-                            <span class="hidden sm:inline">Vue Grille</span>
-                            <span class="sm:hidden">Grille</span>
+                            <i class="fa-solid fa-list text-[11px]"></i>
+                            <span>Fiches</span>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Ligne 2 : Pilules de filtrage (défilables sur mobile, retour à la ligne sur PC) -->
-            <div class="flex items-center gap-2 pt-3.5 border-t border-white/5 overflow-x-auto no-scrollbar sm:flex-wrap pb-1 sm:pb-0">
-                <button data-filter="all" class="filter-btn active shrink-0 px-3.5 py-2 sm:py-1.5 rounded-xl text-xs font-bold bg-amber-400 text-slate-950 transition shadow-sm">
-                    Toutes les boîtes
-                </button>
-                <button data-filter="classic" class="filter-btn shrink-0 px-3.5 py-2 sm:py-1.5 rounded-xl text-xs font-semibold bg-white/[0.04] text-slate-300 hover:bg-white/[0.09] border border-white/5 transition">
-                    <i class="fa-solid fa-box text-amber-400 mr-1.5"></i>Aventures Classiques
-                </button>
-                <button data-filter="short" class="filter-btn shrink-0 px-3.5 py-2 sm:py-1.5 rounded-xl text-xs font-semibold bg-white/[0.04] text-slate-300 hover:bg-white/[0.09] border border-white/5 transition">
-                    <i class="fa-solid fa-bolt text-sky-400 mr-1.5"></i>Short Adventures (Solo)
-                </button>
-                <button data-filter="kids" class="filter-btn shrink-0 px-3.5 py-2 sm:py-1.5 rounded-xl text-xs font-semibold bg-white/[0.04] text-slate-300 hover:bg-white/[0.09] border border-white/5 transition">
-                    <i class="fa-solid fa-child-reaching text-lime-400 mr-1.5"></i>Unlock! Kids
-                </button>
+            <!-- Ligne 2 : Filtres colorés glassmorphism -->
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar sm:flex-wrap py-0.5">
+                    <button data-filter="all" class="filter-btn active shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group text-[11px]"></i>
+                        <span>Toutes</span>
+                    </button>
+                    <button data-filter="classic" class="filter-btn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer flex items-center gap-1.5">
+                        <i class="fa-solid fa-box text-[11px]"></i>
+                        <span>Classiques</span>
+                    </button>
+                    <button data-filter="short" class="filter-btn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer flex items-center gap-1.5">
+                        <i class="fa-solid fa-bolt text-[11px]"></i>
+                        <span>Short Adventures</span>
+                    </button>
+                    <button data-filter="kids" class="filter-btn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer flex items-center gap-1.5">
+                        <i class="fa-solid fa-child-reaching text-[11px]"></i>
+                        <span>Kids</span>
+                    </button>
 
-                <span class="hidden sm:inline-block h-4 w-px bg-white/10 mx-1"></span>
+                    <span class="hidden sm:inline-block h-4 w-px mx-0.5" style="background-color: var(--border-strong);"></span>
 
-                <button data-filter="done" class="filter-btn shrink-0 px-3.5 py-2 sm:py-1.5 rounded-xl text-xs font-semibold bg-white/[0.04] text-slate-300 hover:bg-white/[0.09] border border-white/5 transition">
-                    <i class="fa-solid fa-circle-check text-emerald-400 mr-1.5"></i>Terminées
-                </button>
-                <button data-filter="in-progress" class="filter-btn shrink-0 px-3.5 py-2 sm:py-1.5 rounded-xl text-xs font-semibold bg-white/[0.04] text-slate-300 hover:bg-white/[0.09] border border-white/5 transition">
-                    <i class="fa-solid fa-hourglass-half text-amber-400 mr-1.5"></i>En cours
-                </button>
-                <button data-filter="todo" class="filter-btn shrink-0 px-3.5 py-2 sm:py-1.5 rounded-xl text-xs font-semibold bg-white/[0.04] text-slate-300 hover:bg-white/[0.09] border border-white/5 transition">
-                    <i class="fa-regular fa-circle text-slate-400 mr-1.5"></i>À faire
-                </button>
+                    <button data-filter="done" class="filter-btn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-check text-[11px]"></i>
+                        <span>Terminées</span>
+                    </button>
+                    <button data-filter="in-progress" class="filter-btn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer flex items-center gap-1.5">
+                        <i class="fa-solid fa-hourglass-half text-[11px]"></i>
+                        <span>En cours</span>
+                    </button>
+                    <button data-filter="todo" class="filter-btn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer flex items-center gap-1.5">
+                        <i class="fa-regular fa-circle text-[11px]"></i>
+                        <span>À faire</span>
+                    </button>
+                </div>
+
+                <span id="visible-count-badge" class="text-xs font-semibold hidden sm:inline" style="color: var(--text-muted);"></span>
             </div>
         </div>
     </section>
 
-    <!-- Grille principale des boîtes Unlock! -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex-1 w-full">
-        <div id="games-grid" class="grid grid-cols-1 2xl:grid-cols-2 gap-5">
-            <!-- Cartes injectées dynamiquement -->
+    <!-- Zone principale : Lignes de bibliothèque bien rangées ou Fiches -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-12 flex-1 w-full">
+        <div id="games-container">
+            <!-- Injecté dynamiquement -->
         </div>
 
         <!-- État vide -->
-        <div id="empty-state" class="hidden text-center py-20 bg-slate-900/40 border border-white/5 rounded-3xl mt-4">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-950 border border-white/10 text-slate-500 text-2xl mb-4">
-                <i class="fa-solid fa-box-open"></i>
-            </div>
-            <h3 class="font-display text-lg font-bold text-slate-200">Aucune boîte trouvée</h3>
-            <p class="text-sm text-slate-400 mt-1 max-w-md mx-auto">Aucun jeu ou scénario ne correspond à vos critères actuels.</p>
-            <button id="reset-filters-btn" class="mt-5 px-5 py-2.5 bg-amber-400 text-slate-950 rounded-xl text-xs font-bold hover:bg-amber-300 transition shadow-lg shadow-amber-500/20">
-                Afficher toute la collection
+        <div id="empty-state" class="hidden text-center py-16 rounded-2xl glass-panel mt-4">
+            <p class="font-display text-lg font-bold" style="color: var(--text-primary);">Aucune boîte trouvée</p>
+            <p class="text-xs mt-1.5" style="color: var(--text-muted);">Aucun jeu ne correspond aux filtres sélectionnés.</p>
+            <button id="reset-filters-btn" class="mt-4 px-4 py-2 rounded-xl text-xs font-bold gbtn gbtn-solid-amber cursor-pointer">
+                Tout afficher
             </button>
         </div>
     </main>
 
-    <!-- Modale de confirmation de réinitialisation (remplace confirm) -->
-    <div id="reset-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-white/10 rounded-2xl max-w-md w-full p-6 shadow-2xl">
-            <div class="flex items-center gap-3 text-rose-400 mb-3">
-                <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                </div>
-                <h3 class="font-display text-lg font-bold text-white">Réinitialiser la progression ?</h3>
-            </div>
-            <p class="text-sm text-slate-300 leading-relaxed">
-                Toutes vos cases cochées ainsi que vos notes sur les scénarios et les boîtes seront remises à zéro. Vos jaquettes importées seront conservées.
+    <!-- Modale Fiche de Boîte -->
+    <div id="box-detail-modal" class="hidden fixed inset-0 z-50 bg-black/55 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto" onclick="handleDetailBackdropClick(event)">
+        <div id="box-detail-content" class="modal-animate rounded-2xl max-w-3xl w-full overflow-hidden border shadow-2xl my-auto" style="background-color: var(--bg-surface); border-color: var(--border-strong);">
+            <!-- Injecté dynamiquement -->
+        </div>
+    </div>
+
+    <!-- Modale Réinitialisation -->
+    <div id="reset-modal" class="hidden fixed inset-0 z-50 bg-black/55 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="modal-animate rounded-2xl max-w-md w-full p-6 border shadow-2xl" style="background-color: var(--bg-surface); border-color: var(--border-strong);">
+            <h3 class="font-display text-lg font-bold" style="color: var(--text-primary);">Réinitialiser la progression ?</h3>
+            <p class="text-sm mt-2 leading-relaxed" style="color: var(--text-secondary);">
+                Toutes les cases cochées et toutes les notes attribuées seront remises à zéro.
             </p>
-            <div class="mt-6 flex items-center justify-end gap-2.5">
-                <button type="button" onclick="closeResetModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-white/5 hover:bg-white/10 text-slate-300 transition">
+            <div class="mt-5 flex items-center justify-end gap-2">
+                <button type="button" onclick="closeResetModal()" class="gbtn gbtn-neutral px-4 py-2 rounded-xl text-xs font-bold cursor-pointer">
                     Annuler
                 </button>
-                <button type="button" onclick="confirmResetProgress()" class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-500 hover:bg-rose-400 text-white transition shadow-lg shadow-rose-500/20">
-                    Tout réinitialiser
+                <button type="button" onclick="confirmResetProgress()" class="gbtn gbtn-rose px-4 py-2 rounded-xl text-xs font-bold cursor-pointer">
+                    Réinitialiser
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-        <div class="bg-slate-900/95 backdrop-blur-md border border-white/15 text-slate-100 px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-xs sm:text-sm font-medium">
-            <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
-            <span id="toast-message">Action enregistrée !</span>
+    <!-- Toast discret -->
+    <div id="toast" class="fixed bottom-4 right-4 z-50 transform translate-y-16 opacity-0 transition-all duration-200 pointer-events-none">
+        <div class="px-4 py-2.5 rounded-xl shadow-lg border flex items-center gap-2.5 text-xs font-semibold" style="background-color: var(--text-primary); color: var(--bg-raised); border-color: var(--border-strong);">
+            <i id="toast-icon" class="fa-solid fa-check text-xs"></i>
+            <span id="toast-message">Enregistré</span>
         </div>
     </div>
 
     <!-- Pied de page -->
-    <footer class="border-t border-white/5 bg-slate-950/60 py-6 mt-8 text-center text-xs text-slate-500">
-        <p>Catalogue complet <span class="text-slate-300 font-semibold">Unlock!</span> (Space Cowboys / Space Cow) • Sauvegarde automatique locale activée.</p>
+    <footer class="border-t py-4 text-center text-xs glass-header" style="color: var(--text-muted);">
+        unlocktrackpage · Catalogue Unlock! (Space Cowboys / Space Cow) · Sauvegarde locale automatique.
     </footer>
 
     <!-- Script principal -->
     <script>
         const STORAGE_KEY = 'unlock_tracker_v2_data';
-        const COVERS_STORAGE_KEY = 'unlock_tracker_v2_covers';
+        const THEME_KEY = 'unlock_tracker_theme';
+        const LOCAL_IMAGES_DIR = './asset/images';
 
-        /**
-         * Catalogue complet des 37 boîtes Unlock! officielles (2017–2026)
-         * Les IDs correspondent exactement aux noms de fichiers générés par le script Python.
-         */
         const UNLOCK_CATALOG = [
             // --- BOÎTES CLASSIQUES (3 SCÉNARIOS) ---
             {
                 id: "escape-adventures",
                 category: "classic",
                 title: "Escape Adventures",
-                subtitle: "TROIS AVENTURES PALPITANTES",
                 edition: "Boîte #1",
                 year: 2017,
-                boxBg: "linear-gradient(135deg, #0284c7 0%, #1e3a8a 60%, #0f172a 100%)",
-                spineBg: "#0369a1",
-                ribbonBg: "#f59e0b",
-                accent: "#38bdf8",
-                icon: "fa-flask",
-                bgIcons: ["fa-biohazard", "fa-bomb", "fa-compass"],
                 scenarios: [
                     { name: "La Formule", difficulty: 1 },
                     { name: "Squeek & Sausage", difficulty: 2 },
@@ -398,15 +700,8 @@
                 id: "mystery-adventures",
                 category: "classic",
                 title: "Mystery Adventures",
-                subtitle: "TROIS NOUVELLES AVENTURES",
                 edition: "Boîte #2",
                 year: 2017,
-                boxBg: "linear-gradient(135deg, #059669 0%, #115e59 60%, #064e3b 100%)",
-                spineBg: "#047857",
-                ribbonBg: "#fbbf24",
-                accent: "#34d399",
-                icon: "fa-ship",
-                bgIcons: ["fa-house-chimney-crack", "fa-anchor", "fa-skull"],
                 scenarios: [
                     { name: "La Maison sur la Colline", difficulty: 1 },
                     { name: "Les Pièges du Nautilus", difficulty: 2 },
@@ -417,15 +712,8 @@
                 id: "secret-adventures",
                 category: "classic",
                 title: "Secret Adventures",
-                subtitle: "TROIS AVENTURES INÉDITES",
                 edition: "Boîte #3",
                 year: 2017,
-                boxBg: "linear-gradient(135deg, #7e22ce 0%, #3b0764 65%, #1e1b4b 100%)",
-                spineBg: "#6b21a8",
-                ribbonBg: "#f43f5e",
-                accent: "#c084fc",
-                icon: "fa-hat-wizard",
-                bgIcons: ["fa-apple-whole", "fa-tornado", "fa-dragon"],
                 scenarios: [
                     { name: "Une Histoire de Blanche-Neige", difficulty: 1 },
                     { name: "Les Aventures d'Oz", difficulty: 2 },
@@ -436,15 +724,8 @@
                 id: "exotic-adventures",
                 category: "classic",
                 title: "Exotic Adventures",
-                subtitle: "VOYAGEZ AU BOUT DU MONDE",
                 edition: "Boîte #4",
                 year: 2018,
-                boxBg: "linear-gradient(135deg, #d97706 0%, #9a3412 60%, #451a03 100%)",
-                spineBg: "#b45309",
-                ribbonBg: "#38bdf8",
-                accent: "#fbbf24",
-                icon: "fa-compass",
-                bgIcons: ["fa-moon", "fa-mosque", "fa-paw"],
                 scenarios: [
                     { name: "La Nuit des Croquemitaines", difficulty: 1 },
                     { name: "Le Dernier Conte de Shéhérazade", difficulty: 2 },
@@ -455,15 +736,8 @@
                 id: "heroic-adventures",
                 category: "classic",
                 title: "Heroic Adventures",
-                subtitle: "DEVENEZ DES HÉROS",
                 edition: "Boîte #5",
                 year: 2018,
-                boxBg: "linear-gradient(135deg, #e11d48 0%, #881337 60%, #31102f 100%)",
-                spineBg: "#be123c",
-                ribbonBg: "#facc15",
-                accent: "#fb7185",
-                icon: "fa-gamepad",
-                bgIcons: ["fa-magnifying-glass", "fa-clock", "fa-trophy"],
                 scenarios: [
                     { name: "Insert Coin", difficulty: 1 },
                     { name: "Sherlock Holmes sur le fil", difficulty: 2 },
@@ -474,15 +748,8 @@
                 id: "timeless-adventures",
                 category: "classic",
                 title: "Timeless Adventures",
-                subtitle: "DÉFIEZ LE TEMPS",
                 edition: "Boîte #6",
                 year: 2019,
-                boxBg: "linear-gradient(135deg, #0891b2 0%, #1d4ed8 60%, #172554 100%)",
-                spineBg: "#0e7490",
-                ribbonBg: "#fb923c",
-                accent: "#22d3ee",
-                icon: "fa-hourglass-start",
-                bgIcons: ["fa-tent", "fa-gem", "fa-gears"],
                 scenarios: [
                     { name: "The Noside Show", difficulty: 1 },
                     { name: "Arsène Lupin et le Grand Diamant Blanc", difficulty: 2 },
@@ -493,15 +760,8 @@
                 id: "epic-adventures",
                 category: "classic",
                 title: "Epic Adventures",
-                subtitle: "DES DÉFIS ÉPIQUES",
                 edition: "Boîte #7",
                 year: 2019,
-                boxBg: "linear-gradient(135deg, #dc2626 0%, #7f1d1d 60%, #1c1917 100%)",
-                spineBg: "#b91c1c",
-                ribbonBg: "#fbbf24",
-                accent: "#f87171",
-                icon: "fa-dragon",
-                bgIcons: ["fa-film", "fa-torii-gate", "fa-user-secret"],
                 scenarios: [
                     { name: "7e Art et Décès", difficulty: 1 },
                     { name: "Les Sept Épreuves du Dragon", difficulty: 2 },
@@ -512,15 +772,8 @@
                 id: "star-wars",
                 category: "classic",
                 title: "Star Wars : Escape Game",
-                subtitle: "UNE GALAXIE LOINTAINE...",
                 edition: "Édition Spéciale",
                 year: 2020,
-                boxBg: "linear-gradient(135deg, #27272a 0%, #09090b 65%, #422006 100%)",
-                spineBg: "#eab308",
-                ribbonBg: "#eab308",
-                accent: "#facc15",
-                icon: "fa-jedi",
-                bgIcons: ["fa-space-shuttle", "fa-star", "fa-satellite"],
                 scenarios: [
                     { name: "Un retard imprévu", difficulty: 1 },
                     { name: "Évasion de Hoth", difficulty: 2 },
@@ -531,15 +784,8 @@
                 id: "mythic-adventures",
                 category: "classic",
                 title: "Mythic Adventures",
-                subtitle: "ENTRE MYTHES ET LÉGENDES",
                 edition: "Boîte #8",
                 year: 2020,
-                boxBg: "linear-gradient(135deg, #4f46e5 0%, #312e81 60%, #0f172a 100%)",
-                spineBg: "#4338ca",
-                ribbonBg: "#f59e0b",
-                accent: "#818cf8",
-                icon: "fa-landmark",
-                bgIcons: ["fa-fire", "fa-flask-vial", "fa-earth-europe"],
                 scenarios: [
                     { name: "Dans les griffes d'Hadès", difficulty: 1 },
                     { name: "L'Animal-O-Matic du Professeur Noside", difficulty: 2 },
@@ -550,15 +796,8 @@
                 id: "game-adventures",
                 category: "classic",
                 title: "Game Adventures",
-                subtitle: "LES JEUX CULTES EN ESCAPE",
-                edition: "Boîte #9 (Jeux de société)",
+                edition: "Boîte #9",
                 year: 2021,
-                boxBg: "linear-gradient(135deg, #ea580c 0%, #991b1b 60%, #1e1b4b 100%)",
-                spineBg: "#c2410c",
-                ribbonBg: "#38bdf8",
-                accent: "#fb923c",
-                icon: "fa-dice",
-                bgIcons: ["fa-train", "fa-eye", "fa-virus"],
                 scenarios: [
                     { name: "Les Aventuriers du Rail", difficulty: 1 },
                     { name: "Mysterium", difficulty: 2 },
@@ -569,15 +808,8 @@
                 id: "legendary-adventures",
                 category: "classic",
                 title: "Legendary Adventures",
-                subtitle: "FORGEZ VOTRE LÉGENDE",
                 edition: "Boîte #10",
                 year: 2021,
-                boxBg: "linear-gradient(135deg, #0d9488 0%, #065f46 60%, #022c22 100%)",
-                spineBg: "#0f766e",
-                ribbonBg: "#fbbf24",
-                accent: "#2dd4bf",
-                icon: "fa-crown",
-                bgIcons: ["fa-bullseye", "fa-feather-pointed", "fa-gem"],
                 scenarios: [
                     { name: "Action Story", difficulty: 1 },
                     { name: "Robin des Bois : Mort ou Vif !", difficulty: 2 },
@@ -588,15 +820,8 @@
                 id: "extraordinary-adventures",
                 category: "classic",
                 title: "Extraordinary Adventures",
-                subtitle: "AUX FRONTIÈRES DU RÉEL",
                 edition: "Boîte #11",
                 year: 2022,
-                boxBg: "linear-gradient(135deg, #c026d3 0%, #6b21a8 60%, #2e1065 100%)",
-                spineBg: "#a21caf",
-                ribbonBg: "#38bdf8",
-                accent: "#e879f9",
-                icon: "fa-wand-magic-sparkles",
-                bgIcons: ["fa-clapperboard", "fa-rocket", "fa-rotate"],
                 scenarios: [
                     { name: "Restart", difficulty: 1 },
                     { name: "Hollywood Confidential", difficulty: 2 },
@@ -607,15 +832,8 @@
                 id: "supernatural-adventures",
                 category: "classic",
                 title: "Supernatural Adventures",
-                subtitle: "FRISSONS & MYSTÈRES",
                 edition: "Boîte #12",
                 year: 2023,
-                boxBg: "linear-gradient(135deg, #7c3aed 0%, #3b0764 60%, #09090b 100%)",
-                spineBg: "#6d28d9",
-                ribbonBg: "#ec4899",
-                accent: "#a78bfa",
-                icon: "fa-ghost",
-                bgIcons: ["fa-mask", "fa-skull", "fa-bolt"],
                 scenarios: [
                     { name: "Nova City", difficulty: 1 },
                     { name: "Dia de los Muertos", difficulty: 2 },
@@ -626,15 +844,8 @@
                 id: "risky-adventures",
                 category: "classic",
                 title: "Risky Adventures",
-                subtitle: "PRENEZ TOUS LES RISQUES",
                 edition: "Boîte #13",
                 year: 2024,
-                boxBg: "linear-gradient(135deg, #e11d48 0%, #9f1239 60%, #1f1218 100%)",
-                spineBg: "#be123c",
-                ribbonBg: "#fbbf24",
-                accent: "#f43f5e",
-                icon: "fa-skull-crossbones",
-                bgIcons: ["fa-snowflake", "fa-meteor", "fa-compass"],
                 scenarios: [
                     { name: "La Couronne d'Altipia", difficulty: 1 },
                     { name: "Rendez-vous Surprise", difficulty: 2 },
@@ -645,15 +856,8 @@
                 id: "enchanted-adventures",
                 category: "classic",
                 title: "Enchanted Adventures",
-                subtitle: "LA MAGIE OPÈRE",
                 edition: "Boîte #14",
                 year: 2025,
-                boxBg: "linear-gradient(135deg, #10b981 0%, #312e81 60%, #090d16 100%)",
-                spineBg: "#059669",
-                ribbonBg: "#f59e0b",
-                accent: "#34d399",
-                icon: "fa-sparkles",
-                bgIcons: ["fa-book", "fa-clock", "fa-compass"],
                 scenarios: [
                     { name: "Le Grimoire Oublié", difficulty: 1 },
                     { name: "Les Horloges de Prague", difficulty: 2 },
@@ -664,15 +868,8 @@
                 id: "new-game-adventures",
                 category: "classic",
                 title: "New Game Adventures",
-                subtitle: "NOUVEAUX UNIVERS LUDIQUES",
                 edition: "Boîte #15",
                 year: 2026,
-                boxBg: "linear-gradient(135deg, #ef4444 0%, #1e293b 60%, #0f172a 100%)",
-                spineBg: "#dc2626",
-                ribbonBg: "#38bdf8",
-                accent: "#f87171",
-                icon: "fa-flag-checkered",
-                bgIcons: ["fa-car-side", "fa-dice-d20", "fa-trophy"],
                 scenarios: [
                     { name: "Heat : Pedal to the Metal", difficulty: 1 },
                     { name: "Similo", difficulty: 2 },
@@ -685,15 +882,8 @@
                 id: "kids-detectives",
                 category: "kids",
                 title: "Unlock! Kids : Détectives",
-                subtitle: "SANS ÉCRAN • DÈS 6 ANS",
-                edition: "Édition Kids #1",
+                edition: "Kids #1",
                 year: 2021,
-                boxBg: "linear-gradient(135deg, #65a30d 0%, #15803d 60%, #14532d 100%)",
-                spineBg: "#4d7c0f",
-                ribbonBg: "#facc15",
-                accent: "#a3e635",
-                icon: "fa-magnifying-glass-location",
-                bgIcons: ["fa-feather", "fa-chess-rook", "fa-ticket"],
                 scenarios: [
                     { name: "Les Mystères de Featherfall", difficulty: 1 },
                     { name: "Le Château de MacLock", difficulty: 2 },
@@ -704,15 +894,8 @@
                 id: "kids-epoques",
                 category: "kids",
                 title: "Unlock! Kids : Histoires d'Époques",
-                subtitle: "SANS ÉCRAN • DÈS 6 ANS",
-                edition: "Édition Kids #2",
+                edition: "Kids #2",
                 year: 2022,
-                boxBg: "linear-gradient(135deg, #eab308 0%, #a16207 60%, #422006 100%)",
-                spineBg: "#ca8a04",
-                ribbonBg: "#f97316",
-                accent: "#facc15",
-                icon: "fa-monument",
-                bgIcons: ["fa-ankh", "fa-fire-flame-curved", "fa-coins"],
                 scenarios: [
                     { name: "Les Secrets des Pyramides", difficulty: 1 },
                     { name: "Au temps de la Préhistoire", difficulty: 2 },
@@ -723,15 +906,8 @@
                 id: "kids-legendes",
                 category: "kids",
                 title: "Unlock! Kids : Histoires de Légendes",
-                subtitle: "SANS ÉCRAN • DÈS 6 ANS",
-                edition: "Édition Kids #3",
+                edition: "Kids #3",
                 year: 2023,
-                boxBg: "linear-gradient(135deg, #0284c7 0%, #0369a1 60%, #0c4a6e 100%)",
-                spineBg: "#0369a1",
-                ribbonBg: "#fbbf24",
-                accent: "#38bdf8",
-                icon: "fa-shield-halved",
-                bgIcons: ["fa-sun", "fa-book-open", "fa-sailboat"],
                 scenarios: [
                     { name: "Au cœur de l'Afrique", difficulty: 1 },
                     { name: "Les Contes de Grimm", difficulty: 2 },
@@ -742,15 +918,8 @@
                 id: "kids-ile-emeraude",
                 category: "kids",
                 title: "Unlock! Kids : Histoires de l'Île d'Émeraude",
-                subtitle: "SANS ÉCRAN • DÈS 6 ANS",
-                edition: "Édition Kids #4",
+                edition: "Kids #4",
                 year: 2024,
-                boxBg: "linear-gradient(135deg, #10b981 0%, #047857 60%, #064e3b 100%)",
-                spineBg: "#059669",
-                ribbonBg: "#facc15",
-                accent: "#6ee7b7",
-                icon: "fa-clover",
-                bgIcons: ["fa-hat-wizard", "fa-dragon", "fa-star"],
                 scenarios: [
                     { name: "Les Lutins d'Émeraude", difficulty: 1 },
                     { name: "Le Secret de la Forêt", difficulty: 2 },
@@ -761,15 +930,8 @@
                 id: "mon-premier-canard",
                 category: "kids",
                 title: "Mon Premier Unlock! : Histoires de Canard",
-                subtitle: "SANS ÉCRAN • DÈS 4 ANS",
-                edition: "Mon Premier Unlock! #1",
+                edition: "Mon Premier #1",
                 year: 2025,
-                boxBg: "linear-gradient(135deg, #f59e0b 0%, #b45309 60%, #451a03 100%)",
-                spineBg: "#d97706",
-                ribbonBg: "#38bdf8",
-                accent: "#fde047",
-                icon: "fa-feather",
-                bgIcons: ["fa-water", "fa-sun", "fa-star"],
                 scenarios: [
                     { name: "La Mare aux Canards", difficulty: 1 },
                     { name: "La Ferme en Fête", difficulty: 1 },
@@ -780,15 +942,8 @@
                 id: "mon-premier-grenouille",
                 category: "kids",
                 title: "Mon Premier Unlock! : Histoires de Grenouille",
-                subtitle: "SANS ÉCRAN • DÈS 4 ANS",
-                edition: "Mon Premier Unlock! #2",
+                edition: "Mon Premier #2",
                 year: 2026,
-                boxBg: "linear-gradient(135deg, #22c55e 0%, #15803d 60%, #052e16 100%)",
-                spineBg: "#16a34a",
-                ribbonBg: "#fde047",
-                accent: "#86efac",
-                icon: "fa-frog",
-                bgIcons: ["fa-leaf", "fa-water", "fa-sun"],
                 scenarios: [
                     { name: "Le Nénuphar Magique", difficulty: 1 },
                     { name: "La Rivière Enchantée", difficulty: 1 },
@@ -796,260 +951,165 @@
                 ]
             },
 
-            // --- SHORT ADVENTURES (SOLO / FORMAT POCHE) ---
+            // --- SHORT ADVENTURES ---
             {
                 id: "short-panique-cuisine",
                 category: "short",
                 title: "Short Adv. : Panique en Cuisine",
-                subtitle: "FORMAT COURT • 30 MIN",
-                edition: "Short Adventure #1",
+                edition: "Short #1",
                 year: 2022,
-                boxBg: "linear-gradient(135deg, #f97316 0%, #9a3412 65%, #431407 100%)",
-                spineBg: "#ea580c",
-                ribbonBg: "#fde047",
-                accent: "#fdba74",
-                icon: "fa-utensils",
-                bgIcons: ["fa-fire-burner", "fa-burger", "fa-clock"],
                 scenarios: [{ name: "Panique en Cuisine", difficulty: 1 }]
             },
             {
                 id: "short-reveil-momie",
                 category: "short",
                 title: "Short Adv. : Le Réveil de la Momie",
-                subtitle: "FORMAT COURT • 30 MIN",
-                edition: "Short Adventure #2",
+                edition: "Short #2",
                 year: 2022,
-                boxBg: "linear-gradient(135deg, #d97706 0%, #78350f 65%, #271505 100%)",
-                spineBg: "#b45309",
-                ribbonBg: "#38bdf8",
-                accent: "#fcd34d",
-                icon: "fa-ankh",
-                bgIcons: ["fa-monument", "fa-scroll", "fa-eye"],
                 scenarios: [{ name: "Le Réveil de la Momie", difficulty: 2 }]
             },
             {
                 id: "short-vol-ange",
                 category: "short",
                 title: "Short Adv. : Le Vol de l'Ange",
-                subtitle: "FORMAT COURT • 30 MIN",
-                edition: "Short Adventure #3",
+                edition: "Short #3",
                 year: 2022,
-                boxBg: "linear-gradient(135deg, #0284c7 0%, #1e3a8a 65%, #0f172a 100%)",
-                spineBg: "#0369a1",
-                ribbonBg: "#f43f5e",
-                accent: "#7dd3fc",
-                icon: "fa-feather-pointed",
-                bgIcons: ["fa-magnifying-glass", "fa-gem", "fa-building-columns"],
                 scenarios: [{ name: "Le Vol de l'Ange", difficulty: 2 }]
             },
             {
                 id: "short-secrets-pieuvre",
                 category: "short",
                 title: "Short Adv. : Les Secrets de la Pieuvre",
-                subtitle: "FORMAT COURT • 30 MIN",
-                edition: "Short Adventure #4",
+                edition: "Short #4",
                 year: 2022,
-                boxBg: "linear-gradient(135deg, #0d9488 0%, #115e59 65%, #042f2e 100%)",
-                spineBg: "#0f766e",
-                ribbonBg: "#fbbf24",
-                accent: "#5eead4",
-                icon: "fa-water",
-                bgIcons: ["fa-anchor", "fa-compass", "fa-fish"],
                 scenarios: [{ name: "Les Secrets de la Pieuvre", difficulty: 2 }]
             },
             {
                 id: "short-poursuite-cabrakan",
                 category: "short",
                 title: "Short Adv. : À la Poursuite de Cabrakan",
-                subtitle: "FORMAT COURT • 30 MIN",
-                edition: "Short Adventure #5",
+                edition: "Short #5",
                 year: 2022,
-                boxBg: "linear-gradient(135deg, #16a34a 0%, #14532d 65%, #052e16 100%)",
-                spineBg: "#15803d",
-                ribbonBg: "#f97316",
-                accent: "#86efac",
-                icon: "fa-sun",
-                bgIcons: ["fa-leaf", "fa-mountain", "fa-map"],
                 scenarios: [{ name: "À la Poursuite de Cabrakan", difficulty: 3 }]
             },
             {
                 id: "short-donjon-doo-araan",
                 category: "short",
                 title: "Short Adv. : Le Donjon de Doo-Arann",
-                subtitle: "FORMAT COURT • 30 MIN",
-                edition: "Short Adventure #6",
+                edition: "Short #6",
                 year: 2022,
-                boxBg: "linear-gradient(135deg, #7e22ce 0%, #4c1d95 65%, #1e1b4b 100%)",
-                spineBg: "#6b21a8",
-                ribbonBg: "#facc15",
-                accent: "#d8b4fe",
-                icon: "fa-dungeon",
-                bgIcons: ["fa-dragon", "fa-shield", "fa-key"],
                 scenarios: [{ name: "Le Donjon de Doo-Arann", difficulty: 3 }]
             },
             {
                 id: "short-red-mask",
                 category: "short",
                 title: "Short Adv. : Red Mask",
-                subtitle: "FORMAT COURT • 30 MIN",
-                edition: "Short Adventure #7",
+                edition: "Short #7",
                 year: 2023,
-                boxBg: "linear-gradient(135deg, #dc2626 0%, #7f1d1d 65%, #1c1917 100%)",
-                spineBg: "#b91c1c",
-                ribbonBg: "#fbbf24",
-                accent: "#fca5a5",
-                icon: "fa-mask",
-                bgIcons: ["fa-horse", "fa-hat-cowboy", "fa-star"],
                 scenarios: [{ name: "Red Mask", difficulty: 2 }]
             },
             {
                 id: "short-chat-schrodinger",
                 category: "short",
                 title: "Short Adv. : Le Chat de M. Schrödinger",
-                subtitle: "FORMAT COURT • 30 MIN",
-                edition: "Short Adventure #8",
+                edition: "Short #8",
                 year: 2023,
-                boxBg: "linear-gradient(135deg, #4f46e5 0%, #1e1b4b 65%, #09090b 100%)",
-                spineBg: "#4338ca",
-                ribbonBg: "#34d399",
-                accent: "#a5b4fc",
-                icon: "fa-cat",
-                bgIcons: ["fa-atom", "fa-box", "fa-flask"],
                 scenarios: [{ name: "Le Chat de M. Schrödinger", difficulty: 3 }]
             },
             {
                 id: "short-birmingham",
                 category: "short",
                 title: "Short Adv. : Birmingham 1920",
-                subtitle: "FORMAT COURT • 30 MIN",
-                edition: "Short Adventure #9",
+                edition: "Short #9",
                 year: 2024,
-                boxBg: "linear-gradient(135deg, #475569 0%, #1e293b 65%, #020617 100%)",
-                spineBg: "#334155",
-                ribbonBg: "#f59e0b",
-                accent: "#cbd5e1",
-                icon: "fa-user-secret",
-                bgIcons: ["fa-hat-wizard", "fa-smog", "fa-magnifying-glass"],
                 scenarios: [{ name: "Meurtre à Birmingham", difficulty: 2 }]
             },
             {
                 id: "short-sherlock",
                 category: "short",
                 title: "Short Adv. : Dans la tête de Sherlock H.",
-                subtitle: "FORMAT COURT • 30 MIN",
-                edition: "Short Adventure #10",
+                edition: "Short #10",
                 year: 2024,
-                boxBg: "linear-gradient(135deg, #9333ea 0%, #3b0764 65%, #0f172a 100%)",
-                spineBg: "#7e22ce",
-                ribbonBg: "#38bdf8",
-                accent: "#e9d5ff",
-                icon: "fa-brain",
-                bgIcons: ["fa-magnifying-glass", "fa-book", "fa-lightbulb"],
                 scenarios: [{ name: "Dans la tête de Sherlock Holmes", difficulty: 3 }]
             },
             {
                 id: "short-chant-embruns",
                 category: "short",
                 title: "Short Adv. : Le Chant des Embruns",
-                subtitle: "FORMAT COURT • 30 MIN",
-                edition: "Short Adventure #11",
+                edition: "Short #11",
                 year: 2025,
-                boxBg: "linear-gradient(135deg, #0891b2 0%, #164e63 65%, #083344 100%)",
-                spineBg: "#0e7490",
-                ribbonBg: "#fbbf24",
-                accent: "#67e8f9",
-                icon: "fa-sailboat",
-                bgIcons: ["fa-wind", "fa-compass", "fa-anchor"],
                 scenarios: [{ name: "Le Chant des Embruns", difficulty: 2 }]
             },
             {
                 id: "short-coeur-ocean",
                 category: "short",
                 title: "Short Adv. : Le Cœur de l'Océan",
-                subtitle: "FORMAT COURT • 30 MIN",
-                edition: "Short Adventure #12",
+                edition: "Short #12",
                 year: 2025,
-                boxBg: "linear-gradient(135deg, #2563eb 0%, #1e3a8a 65%, #090d16 100%)",
-                spineBg: "#1d4ed8",
-                ribbonBg: "#2dd4bf",
-                accent: "#93c5fd",
-                icon: "fa-gem",
-                bgIcons: ["fa-water", "fa-anchor", "fa-ship"],
                 scenarios: [{ name: "Le Cœur de l'Océan", difficulty: 3 }]
             },
             {
                 id: "short-ascension",
                 category: "short",
                 title: "Short Adv. : L'Ascension",
-                subtitle: "FORMAT COURT • 30 MIN",
-                edition: "Short Adventure #13",
+                edition: "Short #13",
                 year: 2026,
-                boxBg: "linear-gradient(135deg, #0284c7 0%, #334155 65%, #0f172a 100%)",
-                spineBg: "#0369a1",
-                ribbonBg: "#f97316",
-                accent: "#bae6fd",
-                icon: "fa-mountain",
-                bgIcons: ["fa-snowflake", "fa-icicles", "fa-compass"],
                 scenarios: [{ name: "L'Ascension", difficulty: 2 }]
             },
             {
                 id: "short-voie-sabre",
                 category: "short",
                 title: "Short Adv. : La Voie du Sabre",
-                subtitle: "FORMAT COURT • 30 MIN",
-                edition: "Short Adventure #14",
+                edition: "Short #14",
                 year: 2026,
-                boxBg: "linear-gradient(135deg, #be123c 0%, #4c0519 65%, #09090b 100%)",
-                spineBg: "#9f1239",
-                ribbonBg: "#facc15",
-                accent: "#fda4af",
-                icon: "fa-torii-gate",
-                bgIcons: ["fa-khanda", "fa-fan", "fa-yin-yang"],
                 scenarios: [{ name: "La Voie du Sabre", difficulty: 3 }]
             },
             {
                 id: "short-assassins-creed",
                 category: "short",
                 title: "Short Adv. : Assassin's Creed - L'Épreuve de l'Initiée",
-                subtitle: "FORMAT COURT • 30 MIN",
-                edition: "Short Adventure #15",
+                edition: "Short #15",
                 year: 2026,
-                boxBg: "linear-gradient(135deg, #dc2626 0%, #1e293b 65%, #020617 100%)",
-                spineBg: "#b91c1c",
-                ribbonBg: "#f8fafc",
-                accent: "#fca5a5",
-                icon: "fa-user-ninja",
-                bgIcons: ["fa-feather-pointed", "fa-compass", "fa-eye"],
                 scenarios: [{ name: "Assassin's Creed : L'Épreuve de l'Initiée", difficulty: 3 }]
             }
         ];
 
-        // État utilisateur & cache des jaquettes
         let userProgress = {};
-        let officialImagesCache = {};
+        const failedLocalAssets = new Set();
 
-        // Filtres, tri et vue
         let currentFilter = 'all';
         let currentSearch = '';
         let currentSort = 'year-asc';
-        let currentLayout = 'horizontal';
+        let currentLayout = 'shelf';
+        let activeDetailBoxId = null;
 
-        // Initialisation et restauration depuis localStorage
+        // Thème Jour / Nuit (Indigo glass en jour, Ambre glass en nuit)
+        function updateThemeButton() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const btn = document.getElementById('theme-toggle-btn');
+            const icon = document.getElementById('theme-toggle-icon');
+            const label = document.getElementById('theme-toggle-label');
+            if (btn && icon && label) {
+                btn.className = `gbtn ${isDark ? 'gbtn-amber' : 'gbtn-indigo'} px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer`;
+                icon.className = isDark ? 'fa-solid fa-sun text-[11px]' : 'fa-solid fa-moon text-[11px]';
+                label.textContent = isDark ? 'Jour' : 'Nuit';
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            try {
+                localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+            } catch (e) {}
+            updateThemeButton();
+        }
+
         function initState() {
             let savedProgress = {};
             try {
                 const raw = localStorage.getItem(STORAGE_KEY);
                 if (raw) savedProgress = JSON.parse(raw);
-            } catch (e) {
-                console.warn("Impossible de lire la sauvegarde locale :", e);
-            }
-
-            try {
-                const rawCovers = localStorage.getItem(COVERS_STORAGE_KEY);
-                if (rawCovers) officialImagesCache = JSON.parse(rawCovers);
-            } catch (e) {
-                console.warn("Impossible de lire les jaquettes sauvegardées :", e);
-            }
+            } catch (e) {}
 
             UNLOCK_CATALOG.forEach(box => {
                 const existing = savedProgress[box.id];
@@ -1065,165 +1125,15 @@
         function persistProgress() {
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(userProgress));
-            } catch (e) {
-                // Ignore si quota atteint
-            }
+            } catch (e) {}
         }
 
-        function persistCovers() {
-            try {
-                localStorage.setItem(COVERS_STORAGE_KEY, JSON.stringify(officialImagesCache));
-            } catch (e) {
-                // Ignore si images très volumineuses dépassent 5 Mo localStorage
-            }
+        function getShortTitle(box) {
+            return box.title
+                .replace(/^Unlock!\s*(Kids\s*:\s*)?|^Short Adv\.\s*:\s*|^Mon Premier Unlock!\s*:\s*/i, '')
+                .trim();
         }
 
-        // Notification Toast
-        let toastTimeout;
-        function showToast(message, iconClass = "fa-circle-check text-emerald-400") {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toast-message');
-            const toastIcon = document.getElementById('toast-icon');
-            
-            toastMsg.textContent = message;
-            toastIcon.className = `fa-solid ${iconClass} text-base`;
-            
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 2600);
-        }
-
-        // Basculer entre Vue Horizontale et Vue Grille
-        function setLayoutMode(mode) {
-            currentLayout = mode;
-            const horizBtn = document.getElementById('layout-horizontal-btn');
-            const gridBtn = document.getElementById('layout-grid-btn');
-            const grid = document.getElementById('games-grid');
-
-            if (mode === 'horizontal') {
-                horizBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-400 text-slate-950 flex items-center gap-1.5 transition shadow-sm';
-                gridBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition';
-                grid.className = 'grid grid-cols-1 2xl:grid-cols-2 gap-5';
-            } else {
-                gridBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-400 text-slate-950 flex items-center gap-1.5 transition shadow-sm';
-                horizBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1.5 transition';
-                grid.className = 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5';
-            }
-            renderGames();
-        }
-
-        // Génération de la boîte 3D avec jaquette en arrière-plan + surimpression UNLOCK!
-        function generateBoxArtwork(box) {
-            const shortName = box.title.replace(/^Unlock!\s*(Kids\s*:\s*)?|^Short Adv\.\s*:\s*|^Mon Premier Unlock!\s*:\s*/i, '').toUpperCase();
-            const isKids = box.category === 'kids';
-            const isShort = box.category === 'short';
-            const isStarWars = box.id === 'star-wars';
-            const scenarioCount = box.scenarios.length;
-            const isHoriz = currentLayout === 'horizontal';
-            const hasCover = Boolean(officialImagesCache[box.id]);
-
-            const containerClasses = isHoriz
-                ? 'relative w-full md:w-52 lg:w-56 shrink-0 min-h-[215px] md:min-h-[245px] overflow-hidden flex items-center justify-center p-4 select-none bg-slate-950/90 border-b md:border-b-0 md:border-r border-white/10'
-                : 'relative w-full h-56 sm:h-60 overflow-hidden flex items-center justify-center p-4 select-none bg-slate-950/90 border-b border-white/10';
-
-            return `
-                <div class="${containerClasses}">
-                    <!-- Halo lumineux assorti à la boîte -->
-                    <div class="absolute inset-0 opacity-20 blur-2xl pointer-events-none" style="background: ${box.boxBg}"></div>
-
-                    <!-- Pastille Année -->
-                    <span class="absolute top-2.5 left-2.5 z-10 px-2.5 py-0.5 rounded-lg bg-slate-950/85 backdrop-blur-md border border-white/10 text-[11px] font-display font-bold text-amber-300 shadow">
-                        ${box.year}
-                    </span>
-
-                    <!-- Boutons Photo & Suppression (z-10, sous le header sticky z-30) -->
-                    <div class="absolute bottom-2.5 right-2.5 z-10 flex items-center gap-1.5">
-                        <button 
-                            type="button"
-                            id="remove-photo-btn-${box.id}"
-                            onclick="removeCustomPhoto('${box.id}')"
-                            title="Supprimer l'image de fond"
-                            class="${hasCover ? 'flex' : 'hidden'} w-7 h-7 rounded-lg bg-rose-600/90 hover:bg-rose-500 text-white border border-white/20 items-center justify-center cursor-pointer transition shadow-lg"
-                        >
-                            <i class="fa-solid fa-trash-can text-[11px]"></i>
-                        </button>
-                        <label title="Importer une image de jaquette" class="w-7 h-7 rounded-lg bg-slate-900/90 hover:bg-amber-400 text-slate-300 hover:text-slate-950 border border-white/15 flex items-center justify-center cursor-pointer transition shadow-lg">
-                            <i class="fa-solid fa-camera text-[11px]"></i>
-                            <input type="file" accept="image/*" class="hidden" onchange="handleCustomPhoto(event, '${box.id}')">
-                        </label>
-                    </div>
-
-                    <!-- Boîte physique 3D -->
-                    <div id="box-3d-${box.id}" class="flex relative z-[1] items-stretch ${isShort ? 'h-44' : 'h-48'} transform group-hover:scale-105 group-hover:-rotate-1 transition-all duration-300 shadow-[0_20px_38px_rgba(0,0,0,0.9)]">
-                        
-                        <!-- Tranche latérale carton -->
-                        <div class="${isShort ? 'w-2.5' : 'w-3.5'} rounded-l-md border-y border-l border-white/25 flex flex-col items-center justify-between py-2 relative overflow-hidden" style="background: ${box.spineBg}; filter: brightness(0.75);">
-                            <div class="w-1.5 h-1.5 rounded-full bg-white/40"></div>
-                            <span class="text-[6px] font-display font-black tracking-widest text-white/85 uppercase [writing-mode:vertical-rl] rotate-180">UNLOCK!</span>
-                            <div class="w-2 h-2 rounded-sm bg-black/35"></div>
-                        </div>
-
-                        <!-- Face avant de la jaquette -->
-                        <div class="${isShort ? 'w-36' : 'w-40'} rounded-r-md border border-white/25 relative overflow-hidden flex flex-col justify-between p-2 text-center" style="background: ${box.boxBg}">
-                            
-                            <!-- Image officielle / personnelle intégrée en fond -->
-                            <img 
-                                id="box-bg-img-${box.id}"
-                                ${hasCover ? `src="${officialImagesCache[box.id]}"` : ''}
-                                alt="${box.title}"
-                                onerror="onBoxBgError('${box.id}')"
-                                class="${hasCover ? 'block' : 'hidden'} absolute inset-0 w-full h-full object-cover z-0"
-                            >
-                            <!-- Dégradé de contraste pour préserver la lisibilité du logo UNLOCK! et du titre -->
-                            <div id="box-bg-overlay-${box.id}" class="${hasCover ? 'block' : 'hidden'} absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-950/15 to-slate-950/85 z-0 pointer-events-none"></div>
-
-                            <!-- Reflet brillant -->
-                            <div class="box-gloss absolute inset-0 pointer-events-none z-0"></div>
-                            
-                            <!-- Icônes d'arrière-plan (masquées si jaquette chargée) -->
-                            <div id="box-bg-icons-${box.id}" class="${hasCover ? 'hidden' : 'block'}">
-                                <i class="fa-solid ${box.bgIcons[0]} absolute -left-2 top-12 text-3xl text-white/10 -rotate-12 pointer-events-none"></i>
-                                <i class="fa-solid ${box.bgIcons[1]} absolute -right-2 top-14 text-3xl text-white/10 rotate-12 pointer-events-none"></i>
-                                <i class="fa-solid ${box.bgIcons[2]} absolute bottom-8 right-3 text-2xl text-white/10 -rotate-6 pointer-events-none"></i>
-                            </div>
-
-                            <!-- Haut de boîte : Logo UNLOCK! + Ruban Titre (2 lignes max sans troncature) -->
-                            <div class="relative z-10 pt-0.5">
-                                <div class="inline-flex items-center justify-center gap-0.5 bg-slate-950/90 border border-amber-400/50 px-1.5 py-0.5 rounded shadow-md">
-                                    <span class="font-display font-black text-[11px] tracking-wider text-white">UNLOCK</span>
-                                    <span class="font-display font-black text-[11px] text-amber-400">!</span>
-                                    ${isKids ? '<span class="ml-0.5 text-[7px] font-black bg-lime-400 text-slate-950 px-1 rounded">KIDS</span>' : ''}
-                                    ${isShort ? '<span class="ml-0.5 text-[7px] font-black bg-sky-400 text-slate-950 px-1 rounded">SHORT</span>' : ''}
-                                </div>
-                                <div class="mt-1 ${isShort ? 'text-[7.5px] leading-tight line-clamp-2 min-h-[20px] flex items-center justify-center' : 'text-[8px] leading-tight line-clamp-2'} font-extrabold tracking-wide uppercase px-1.5 py-0.5 rounded-sm text-slate-950 shadow-sm break-words" style="background: ${box.ribbonBg}">
-                                    ${shortName}
-                                </div>
-                            </div>
-
-                            <!-- Centre : Médaillon thématique (masqué si image active) + Sous-titre -->
-                            <div class="relative z-10 my-auto flex flex-col items-center justify-center">
-                                <div id="box-center-icon-${box.id}" class="${hasCover ? 'hidden' : 'flex'} ${isShort ? 'w-10 h-10' : 'w-13 h-13 p-3'} rounded-full bg-slate-950/45 border border-white/25 items-center justify-center shadow-inner backdrop-blur-[2px]">
-                                    <i class="fa-solid ${box.icon} ${isShort ? 'text-lg' : 'text-xl'} drop-shadow-[0_2px_6px_rgba(0,0,0,0.85)]" style="color: ${box.accent}"></i>
-                                </div>
-                                <span class="mt-1 text-[6.5px] font-bold tracking-wider uppercase text-white/95 drop-shadow-[0_1px_3px_rgba(0,0,0,0.95)] bg-slate-950/50 px-1.5 py-0.5 rounded">
-                                    ${box.subtitle}
-                                </span>
-                            </div>
-
-                            <!-- Bas de boîte : Nombre d'aventures & Éditeur -->
-                            <div class="relative z-10 flex items-center justify-between border-t border-white/20 pt-1 text-[7px] text-white/95 font-semibold">
-                                <span class="bg-black/65 px-1.5 py-0.5 rounded text-amber-300 font-bold">${scenarioCount > 1 ? scenarioCount + ' AVENTURES' : '1 AVENTURE'}</span>
-                                <span class="tracking-tighter uppercase opacity-95 drop-shadow">${isStarWars ? 'FFG / ASMODEE' : isKids ? 'SPACE COW' : 'SPACE COWBOYS'}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Statut d'une boîte ('done', 'in-progress', 'todo')
         function getBoxStatus(boxId) {
             const box = UNLOCK_CATALOG.find(b => b.id === boxId);
             const totalInBox = box ? box.scenarios.length : 3;
@@ -1233,77 +1143,68 @@
             return 'todo';
         }
 
-        // Cocher / décocher un scénario
-        function toggleScenario(boxId, scenarioIndex) {
-            const current = userProgress[boxId].scenarios[scenarioIndex];
-            userProgress[boxId].scenarios[scenarioIndex] = !current;
-            persistProgress();
+        let toastTimeout;
+        function showToast(message, iconClass = "fa-check") {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            const toastIcon = document.getElementById('toast-icon');
 
-            const box = UNLOCK_CATALOG.find(b => b.id === boxId);
-            const scenName = box.scenarios[scenarioIndex].name;
-            if (!current) {
-                showToast(`Scénario « ${scenName} » validé !`);
-            }
-            renderAll();
+            toastMsg.textContent = message;
+            toastIcon.className = `fa-solid ${iconClass} text-xs`;
+
+            toast.classList.remove('translate-y-16', 'opacity-0');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-16', 'opacity-0');
+            }, 2200);
         }
 
-        // Cocher / décocher toute une boîte
-        function toggleFullBox(boxId) {
-            const status = getBoxStatus(boxId);
-            const newState = status !== 'done';
-            const box = UNLOCK_CATALOG.find(b => b.id === boxId);
-            userProgress[boxId].scenarios = box.scenarios.map(() => newState);
-            persistProgress();
+        // Boutons colorés glassmorphism (Étagères / Fiches)
+        function styleLayoutButtons() {
+            const shelfBtn = document.getElementById('layout-shelf-btn');
+            const cardsBtn = document.getElementById('layout-cards-btn');
 
-            if (newState) {
-                showToast(`Boîte « ${box.title} » terminée !`);
+            if (currentLayout === 'shelf') {
+                shelfBtn.className = 'gbtn gbtn-solid-amber px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 cursor-pointer';
+                cardsBtn.className = 'gbtn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 cursor-pointer border border-transparent';
+                cardsBtn.setAttribute('style', 'color: var(--text-secondary); box-shadow: none; background: transparent;');
+                shelfBtn.removeAttribute('style');
             } else {
-                showToast(`Progression de « ${box.title} » réinitialisée.`, "fa-rotate-left text-amber-400");
+                cardsBtn.className = 'gbtn gbtn-solid-amber px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 cursor-pointer';
+                shelfBtn.className = 'gbtn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 cursor-pointer border border-transparent';
+                shelfBtn.setAttribute('style', 'color: var(--text-secondary); box-shadow: none; background: transparent;');
+                cardsBtn.removeAttribute('style');
             }
-            renderAll();
         }
 
-        // Noter un scénario individuellement (1 à 5 étoiles)
-        function setScenarioRating(boxId, scenarioIndex, rating, event) {
-            if (event) event.stopPropagation();
+        // Boutons de filtres colorés glassmorphism (chaque catégorie/état a sa couleur)
+        const FILTER_STYLES = {
+            'all':         { idle: 'gbtn-amber',   active: 'gbtn-solid-amber' },
+            'classic':     { idle: 'gbtn-amber',   active: 'gbtn-solid-amber' },
+            'short':       { idle: 'gbtn-sky',     active: 'gbtn-solid-sky' },
+            'kids':        { idle: 'gbtn-lime',    active: 'gbtn-solid-lime' },
+            'done':        { idle: 'gbtn-emerald', active: 'gbtn-solid-emerald' },
+            'in-progress': { idle: 'gbtn-amber',   active: 'gbtn-solid-amber' },
+            'todo':        { idle: 'gbtn-neutral', active: 'gbtn-solid-brown' },
+        };
 
-            const prog = userProgress[boxId];
-            const current = prog.scenarioRatings[scenarioIndex];
-            prog.scenarioRatings[scenarioIndex] = (current === rating) ? 0 : rating;
-
-            // Recalcul de la moyenne automatique de la boîte
-            const ratedScenarios = prog.scenarioRatings.filter(r => r > 0);
-            if (ratedScenarios.length > 0) {
-                const sum = ratedScenarios.reduce((a, b) => a + b, 0);
-                prog.rating = Math.round((sum / ratedScenarios.length) * 10) / 10;
-            } else {
-                prog.rating = 0;
-            }
-            persistProgress();
-
-            const box = UNLOCK_CATALOG.find(b => b.id === boxId);
-            if (prog.scenarioRatings[scenarioIndex] > 0) {
-                showToast(`Note ${prog.scenarioRatings[scenarioIndex]}/5 pour « ${box.scenarios[scenarioIndex].name} »`, "fa-star text-amber-400");
-            }
-            renderAll();
+        function styleFilterButtons() {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                const key = btn.dataset.filter;
+                const cfg = FILTER_STYLES[key] || { idle: 'gbtn-neutral', active: 'gbtn-solid-amber' };
+                const isActive = key === currentFilter;
+                btn.className = `filter-btn ${isActive ? 'active ' + cfg.active : cfg.idle} gbtn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer flex items-center gap-1.5`;
+            });
         }
 
-        // Noter manuellement la boîte globale (1 à 5 étoiles)
-        function setRating(boxId, rating) {
-            const current = userProgress[boxId].rating;
-            userProgress[boxId].rating = (current === rating) ? 0 : rating;
-            persistProgress();
-
-            const box = UNLOCK_CATALOG.find(b => b.id === boxId);
-            if (userProgress[boxId].rating > 0) {
-                showToast(`Note globale ${rating}/5 attribuée à « ${box.title} »`, "fa-star text-amber-400");
-            }
-            renderAll();
+        function setLayoutMode(mode) {
+            currentLayout = mode;
+            styleLayoutButtons();
+            renderGames();
         }
 
-        // Filtrage des boîtes
         function getFilteredBoxes() {
-            return UNLOCK_CATALOG.filter(box => {
+            const filtered = UNLOCK_CATALOG.filter(box => {
                 const status = getBoxStatus(box.id);
                 if (currentFilter === 'classic' && box.category !== 'classic') return false;
                 if (currentFilter === 'short' && box.category !== 'short') return false;
@@ -1320,9 +1221,23 @@
                 }
                 return true;
             });
+
+            filtered.sort((a, b) => {
+                if (currentSort === 'year-asc') return a.year - b.year;
+                if (currentSort === 'year-desc') return b.year - a.year;
+                if (currentSort === 'rating-desc') return userProgress[b.id].rating - userProgress[a.id].rating;
+                if (currentSort === 'alpha') return a.title.localeCompare(b.title);
+                if (currentSort === 'progress-desc') {
+                    const pA = userProgress[a.id].scenarios.filter(Boolean).length / a.scenarios.length;
+                    const pB = userProgress[b.id].scenarios.filter(Boolean).length / b.scenarios.length;
+                    return pB - pA;
+                }
+                return 0;
+            });
+
+            return filtered;
         }
 
-        // Mise à jour dynamique des cartes KPI Bento
         function updateStats() {
             const visibleBoxes = getFilteredBoxes();
             const totalBoxes = visibleBoxes.length;
@@ -1345,308 +1260,593 @@
                 }
             });
 
-            document.getElementById('stat-boxes-done').textContent = boxesDone;
-            document.getElementById('stat-boxes-total').textContent = `/ ${totalBoxes}`;
-            document.getElementById('stat-scenarios-done').textContent = scenariosDone;
-            document.getElementById('stat-scenarios-total').textContent = `/ ${totalScenarios}`;
-
-            const avg = ratedCount > 0 ? (ratingSum / ratedCount).toFixed(1) : '-';
-            document.getElementById('stat-avg-rating').textContent = avg;
-
-            const filterLabels = {
-                'all': 'Progression globale',
-                'classic': 'Progression • Classiques',
-                'short': 'Progression • Short Adv.',
-                'kids': 'Progression • Kids',
-                'done': 'Progression • Terminées',
-                'in-progress': 'Progression • En cours',
-                'todo': 'Progression • À faire'
-            };
-            document.getElementById('progress-label').textContent = filterLabels[currentFilter] || 'Progression';
-
+            const avg = ratedCount > 0 ? (ratingSum / ratedCount).toFixed(1) : '–';
             const percent = totalScenarios > 0 ? Math.round((scenariosDone / totalScenarios) * 100) : 0;
+
+            document.getElementById('stat-boxes-done').textContent = boxesDone;
+            document.getElementById('stat-boxes-total').textContent = `/${totalBoxes}`;
+            document.getElementById('stat-scenarios-done').textContent = scenariosDone;
+            document.getElementById('stat-scenarios-total').textContent = `/${totalScenarios}`;
+            document.getElementById('stat-avg-rating').textContent = avg;
             document.getElementById('progress-percent').textContent = `${percent}%`;
             document.getElementById('progress-bar').style.width = `${percent}%`;
+
+            document.getElementById('m-stat-boxes').textContent = `${boxesDone}/${totalBoxes}`;
+            document.getElementById('m-stat-scenarios').textContent = `${scenariosDone}/${totalScenarios}`;
+            document.getElementById('m-stat-rating').textContent = avg;
+            document.getElementById('m-stat-percent').textContent = `${percent}%`;
+
+            const countBadge = document.getElementById('visible-count-badge');
+            if (countBadge) {
+                countBadge.textContent = `${totalBoxes} boîte${totalBoxes > 1 ? 's' : ''}`;
+            }
         }
 
-        // Rendu des cadenas de difficulté (1 à 3)
+        // Boîte 3/4 avec ombre elliptique douce au sol
+        function generatePhysicalBox(box, size = 'shelf') {
+            const isShort = box.category === 'short';
+            const status = getBoxStatus(box.id);
+            const usePackshot = !failedLocalAssets.has(box.id);
+
+            let badgeHtml = '';
+            if (status === 'done') {
+                badgeHtml = `
+                    <span class="absolute top-0.5 right-0.5 z-20 w-5 h-5 rounded-full flex items-center justify-center text-[9px] text-white shadow-md border" style="background-color: var(--done-solid); border-color: var(--bg-raised);" title="Terminée">
+                        <i class="fa-solid fa-check"></i>
+                    </span>
+                `;
+            } else if (status === 'in-progress') {
+                badgeHtml = `
+                    <span class="absolute top-0.5 right-0.5 z-20 w-5 h-5 rounded-full flex items-center justify-center text-[8px] text-white shadow-md border" style="background-color: var(--star-on); border-color: var(--bg-raised);" title="En cours">
+                        <i class="fa-solid fa-bookmark"></i>
+                    </span>
+                `;
+            }
+
+            let sizeClass = isShort
+                ? 'h-[172px] sm:h-[188px] max-w-[118px] sm:max-w-[130px]'
+                : 'h-[188px] sm:h-[206px] max-w-[140px] sm:max-w-[154px]';
+
+            if (size === 'modal') {
+                sizeClass = isShort
+                    ? 'h-56 sm:h-64 max-w-[178px]'
+                    : 'h-60 sm:h-68 max-w-[205px]';
+            } else if (size === 'card') {
+                sizeClass = isShort
+                    ? 'h-48 max-w-[132px]'
+                    : 'h-52 max-w-[152px]';
+            }
+
+            if (usePackshot) {
+                const imgSrc = `${LOCAL_IMAGES_DIR}/${box.id}.webp`;
+                return `
+                    <div class="relative flex flex-col items-center justify-end w-full select-none">
+                        <div class="relative flex items-end justify-center ${sizeClass}">
+                            ${badgeHtml}
+                            <img
+                                src="${imgSrc}"
+                                alt="${box.title}"
+                                onerror="handleBoxImageError('${box.id}')"
+                                class="packshot-img h-full w-auto max-w-full object-contain object-bottom"
+                            >
+                        </div>
+                        <div class="ground-shadow"></div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="relative flex items-center justify-center w-32 h-44 rounded-lg text-center p-2 text-xs font-semibold border glass-panel">
+                    ${badgeHtml}
+                    <span>${getShortTitle(box)}</span>
+                </div>
+            `;
+        }
+
+        function getBoxesPerShelf() {
+            const w = window.innerWidth;
+            if (w >= 1280) return 6;
+            if (w >= 1024) return 5;
+            if (w >= 768) return 4;
+            if (w >= 500) return 3;
+            return 2;
+        }
+
+        function chunkArray(arr, size) {
+            const rows = [];
+            for (let i = 0; i < arr.length; i += size) {
+                rows.push(arr.slice(i, i + size));
+            }
+            return rows;
+        }
+
+        // Lignes de bibliothèque bien rangées + ombres 3/4 naturelles
+        function renderShelfSection(sectionTitle, boxes) {
+            if (!boxes.length) return '';
+            const perShelf = getBoxesPerShelf();
+            const rows = chunkArray(boxes, perShelf);
+            const sectionDone = boxes.filter(b => getBoxStatus(b.id) === 'done').length;
+
+            const shelvesHtml = rows.map(row => {
+                const itemsHtml = row.map(box => {
+                    const prog = userProgress[box.id];
+                    const total = box.scenarios.length;
+                    const done = prog.scenarios.filter(Boolean).length;
+
+                    return `
+                        <button
+                            type="button"
+                            onclick="openDetailModal('${box.id}')"
+                            class="shelf-box group flex flex-col items-center focus:outline-none cursor-pointer w-full"
+                            title="${box.title} (${box.year}) — ${done}/${total}"
+                        >
+                            ${generatePhysicalBox(box, 'shelf')}
+                        </button>
+                    `;
+                }).join('');
+
+                const labelsHtml = row.map(box => {
+                    const prog = userProgress[box.id];
+                    const shortName = getShortTitle(box);
+                    const status = getBoxStatus(box.id);
+                    const dotsHtml = box.scenarios.map((_, i) => `
+                        <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${prog.scenarios[i] ? 'var(--done-solid)' : 'var(--border-strong)'};"></span>
+                    `).join('');
+
+                    return `
+                        <button
+                            type="button"
+                            onclick="openDetailModal('${box.id}')"
+                            class="group flex flex-col items-center text-center px-1 py-1.5 rounded-lg hover:opacity-80 transition cursor-pointer focus:outline-none min-w-0"
+                        >
+                            <span class="text-[11px] font-semibold line-clamp-1 w-full" style="color: var(--text-primary);">
+                                ${shortName}
+                            </span>
+                            <div class="mt-0.5 flex items-center justify-center gap-1.5 text-[10px]" style="color: var(--text-muted);">
+                                <span>${box.year}</span>
+                                <span class="flex items-center gap-0.5">${dotsHtml}</span>
+                                ${prog.rating > 0
+                                    ? `<span class="font-bold" style="color: var(--star-on);">★${prog.rating}</span>`
+                                    : (status === 'done' ? '<i class="fa-solid fa-check text-[9px]" style="color: var(--done-solid);"></i>' : '')
+                                }
+                            </div>
+                        </button>
+                    `;
+                }).join('');
+
+                const gridColsClass = {
+                    2: 'grid-cols-2',
+                    3: 'grid-cols-3',
+                    4: 'grid-cols-4',
+                    5: 'grid-cols-5',
+                    6: 'grid-cols-6'
+                }[perShelf] || 'grid-cols-4';
+
+                return `
+                    <div class="border-b last:border-b-0" style="border-color: var(--border-subtle);">
+                        <!-- Boîtes alignées en ligne avec leur ombre elliptique 3/4 -->
+                        <div class="pt-6 pb-0 px-3 sm:px-6">
+                            <div class="grid ${gridColsClass} gap-3 sm:gap-5 items-end justify-items-center">
+                                ${itemsHtml}
+                            </div>
+                        </div>
+
+                        <!-- Ligne d'étagère bibliothèque propre et fine -->
+                        <div class="shelf-line-plane"></div>
+                        <div class="shelf-line-bar"></div>
+
+                        <!-- Cartels propres sous la ligne -->
+                        <div class="px-3 sm:px-6 py-2">
+                            <div class="grid ${gridColsClass} gap-3 sm:gap-5">
+                                ${labelsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <section class="mb-8 last:mb-0">
+                    ${sectionTitle ? `
+                        <div class="flex items-baseline justify-between gap-4 mb-2.5 px-1">
+                            <h2 class="font-display text-lg sm:text-xl font-bold tracking-tight" style="color: var(--text-primary);">${sectionTitle}</h2>
+                            <span class="text-xs font-semibold" style="color: var(--text-muted);">
+                                <strong style="color: var(--done-solid);">${sectionDone}</strong> / ${boxes.length} terminées
+                            </span>
+                        </div>
+                    ` : ''}
+
+                    <div class="shelf-section-wrap">
+                        ${shelvesHtml}
+                    </div>
+                </section>
+            `;
+        }
+
         function renderDifficultyLocks(level) {
-            let html = '<div class="flex items-center gap-1 mt-1 opacity-85" title="Difficulté ' + level + '/3">';
+            let html = '<div class="flex items-center gap-1 mt-1" title="Difficulté ' + level + '/3">';
             for (let i = 1; i <= 3; i++) {
-                html += `<i class="fa-solid fa-lock text-[9px] ${i <= level ? 'text-amber-400' : 'text-slate-700'}"></i>`;
+                html += `<i class="fa-solid fa-lock text-[9px]" style="color: ${i <= level ? 'var(--star-on)' : 'var(--star-off)'};"></i>`;
             }
             html += '</div>';
             return html;
         }
 
-        // Rendu de la liste/grille des jeux
-        function renderGames() {
-            const grid = document.getElementById('games-grid');
-            const emptyState = document.getElementById('empty-state');
-            let filtered = getFilteredBoxes();
+        function renderScenariosAndRating(box) {
+            const prog = userProgress[box.id];
 
-            // Tri
-            filtered.sort((a, b) => {
-                if (currentSort === 'year-asc') return a.year - b.year;
-                if (currentSort === 'year-desc') return b.year - a.year;
-                if (currentSort === 'rating-desc') return userProgress[b.id].rating - userProgress[a.id].rating;
-                if (currentSort === 'alpha') return a.title.localeCompare(b.title);
-                if (currentSort === 'progress-desc') {
-                    const pA = userProgress[a.id].scenarios.filter(Boolean).length / a.scenarios.length;
-                    const pB = userProgress[b.id].scenarios.filter(Boolean).length / b.scenarios.length;
-                    return pB - pA;
-                }
-                return 0;
-            });
+            const scenariosHtml = box.scenarios.map((scen, idx) => {
+                const checked = prog.scenarios[idx];
+                const scenRating = prog.scenarioRatings[idx] || 0;
 
-            if (filtered.length === 0) {
-                grid.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
-            emptyState.classList.add('hidden');
-
-            const isHoriz = currentLayout === 'horizontal';
-
-            grid.innerHTML = filtered.map(box => {
-                const prog = userProgress[box.id];
-                const totalInBox = box.scenarios.length;
-                const doneCount = prog.scenarios.filter(Boolean).length;
-                const status = getBoxStatus(box.id);
-
-                let borderClass = 'border-white/10 hover:border-white/20';
-                let badgeBg = 'bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border-white/10';
-                let badgeIcon = 'fa-regular fa-square';
-
-                if (status === 'done') {
-                    borderClass = 'border-emerald-500/40 shadow-[0_0_25px_rgba(16,185,129,0.08)]';
-                    badgeBg = 'bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border-emerald-500/30';
-                    badgeIcon = 'fa-solid fa-square-check';
-                } else if (status === 'in-progress') {
-                    borderClass = 'border-amber-500/40';
-                    badgeBg = 'bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border-amber-500/30';
-                    badgeIcon = 'fa-solid fa-square-minus';
-                }
-
-                // Génération des lignes de scénarios
-                const scenariosHtml = box.scenarios.map((scen, idx) => {
-                    const checked = prog.scenarios[idx];
-                    const scenRating = prog.scenarioRatings[idx] || 0;
-
-                    let scenStarsHtml = '';
-                    for (let s = 1; s <= 5; s++) {
-                        const active = s <= scenRating;
-                        scenStarsHtml += `
-                            <button 
-                                type="button" 
-                                onclick="setScenarioRating('${box.id}', ${idx}, ${s}, event)"
-                                class="star-btn p-1 sm:p-0.5 text-xs sm:text-[11px] focus:outline-none ${active ? 'text-amber-400' : 'text-slate-700 hover:text-amber-300'}"
-                                title="Noter ce scénario ${s}/5"
-                            >
-                                <i class="fa-solid fa-star"></i>
-                            </button>
-                        `;
-                    }
-
-                    return `
-                        <div 
-                            onclick="toggleScenario('${box.id}', ${idx})"
-                            class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition select-none border ${
-                                checked 
-                                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-100' 
-                                : 'bg-white/[0.02] hover:bg-white/[0.06] border-transparent text-slate-200'
-                            }"
-                        >
-                            <div class="flex items-start sm:items-center gap-2.5 min-w-0 flex-1">
-                                <div class="w-5 h-5 mt-0.5 sm:mt-0 shrink-0 rounded-md flex items-center justify-center border transition ${
-                                    checked 
-                                    ? 'bg-emerald-400 border-emerald-400 text-slate-950 shadow-sm shadow-emerald-400/30' 
-                                    : 'border-slate-600 bg-slate-950/80'
-                                }">
-                                    ${checked ? '<i class="fa-solid fa-check text-[11px] font-black"></i>' : ''}
-                                </div>
-                                <div class="min-w-0 flex-1 flex flex-col justify-center">
-                                    <span class="text-xs sm:text-[13px] font-medium leading-snug break-words ${checked ? 'line-through opacity-75' : ''}">${scen.name}</span>
-                                    ${renderDifficultyLocks(scen.difficulty)}
-                                </div>
-                            </div>
-                            <div class="flex items-center self-end sm:self-center shrink-0 bg-slate-950/80 px-2 py-0.5 rounded-lg border border-white/5" onclick="event.stopPropagation()">
-                                ${scenStarsHtml}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-                // Étoiles globales de la boîte
-                const roundedBoxRating = Math.round(prog.rating);
-                let boxStarsHtml = '';
+                let scenStarsHtml = '';
                 for (let s = 1; s <= 5; s++) {
-                    const isFilled = s <= roundedBoxRating;
-                    boxStarsHtml += `
-                        <button 
-                            type="button" 
-                            onclick="setRating('${box.id}', ${s})" 
-                            class="star-btn p-1.5 sm:p-1 text-base sm:text-sm focus:outline-none ${isFilled ? 'text-amber-400' : 'text-slate-700 hover:text-amber-300'}"
-                            title="Attribuer ${s}/5 à la boîte"
+                    const active = s <= scenRating;
+                    scenStarsHtml += `
+                        <button
+                            type="button"
+                            onclick="setScenarioRating('${box.id}', ${idx}, ${s}, event)"
+                            class="star-btn p-1 sm:p-0.5 text-xs focus:outline-none cursor-pointer"
+                            style="color: ${active ? 'var(--star-on)' : 'var(--star-off)'};"
+                            title="Noter ${s}/5"
                         >
                             <i class="fa-solid fa-star"></i>
                         </button>
                     `;
                 }
 
-                const cardFlexClass = isHoriz ? 'flex-col md:flex-row' : 'flex-col';
+                const rowStyle = checked
+                    ? 'background-color: var(--done-bg); border-color: var(--done-border); color: var(--done-text);'
+                    : 'background-color: var(--glass-bg); border-color: var(--glass-border); color: var(--text-primary);';
+
+                const checkStyle = checked
+                    ? 'background-color: var(--done-solid); border-color: var(--done-solid); color: #fff;'
+                    : 'background-color: var(--bg-raised); border-color: var(--border-strong);';
 
                 return `
-                    <article class="vault-card group rounded-3xl border ${borderClass} overflow-hidden flex ${cardFlexClass} shadow-xl">
-                        <!-- Visuel 3D de la boîte -->
-                        ${generateBoxArtwork(box)}
-
-                        <!-- Contenu : En-tête, Scénarios et Note Boîte -->
-                        <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-4 min-w-0">
-                            <div>
-                                <!-- Titre boîte + Bouton validation rapide -->
-                                <div class="flex items-start justify-between gap-3">
-                                    <div class="min-w-0">
-                                        <span class="text-[10px] font-bold uppercase tracking-widest text-amber-400/90 block">${box.edition}</span>
-                                        <h2 class="font-display text-lg font-extrabold text-white leading-tight mt-0.5 break-words">${box.title}</h2>
-                                    </div>
-                                    <button 
-                                        type="button"
-                                        onclick="toggleFullBox('${box.id}')"
-                                        title="${status === 'done' ? 'Tout décocher' : 'Marquer toute la boîte comme terminée'}"
-                                        class="shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-bold border transition flex items-center gap-1.5 ${badgeBg}"
-                                    >
-                                        <i class="${badgeIcon}"></i>
-                                        <span>${doneCount}/${totalInBox}</span>
-                                    </button>
-                                </div>
-
-                                <!-- Liste des scénarios -->
-                                <div class="mt-3.5 space-y-2">
-                                    ${scenariosHtml}
-                                </div>
+                    <div
+                        onclick="toggleScenario('${box.id}', ${idx})"
+                        class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition select-none border"
+                        style="${rowStyle}"
+                    >
+                        <div class="flex items-start sm:items-center gap-2.5 min-w-0 flex-1">
+                            <div class="w-4 h-4 mt-0.5 sm:mt-0 shrink-0 rounded flex items-center justify-center border" style="${checkStyle}">
+                                ${checked ? '<i class="fa-solid fa-check text-[9px]"></i>' : ''}
                             </div>
-
-                            <!-- Pied de carte : Note globale de la boîte -->
-                            <div class="pt-3 border-t border-white/10 flex items-center justify-between gap-2">
-                                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Note boîte</span>
-                                <div class="flex items-center gap-1">
-                                    <div class="flex items-center">${boxStarsHtml}</div>
-                                    <span class="ml-1.5 text-xs font-display font-bold ${prog.rating > 0 ? 'text-amber-300' : 'text-slate-500'}">
-                                        ${prog.rating > 0 ? prog.rating + '/5' : '-/5'}
-                                    </span>
-                                </div>
+                            <div class="min-w-0 flex-1">
+                                <span class="text-xs sm:text-[13px] font-medium leading-snug break-words ${checked ? 'line-through opacity-80' : ''}">${scen.name}</span>
+                                ${renderDifficultyLocks(scen.difficulty)}
                             </div>
                         </div>
-                    </article>
+                        <div class="flex items-center self-end sm:self-center shrink-0 px-2 py-0.5 rounded-lg border" style="background-color: var(--glass-bg); border-color: var(--glass-border);" onclick="event.stopPropagation()">
+                            ${scenStarsHtml}
+                        </div>
+                    </div>
                 `;
             }).join('');
+
+            const roundedBoxRating = Math.round(prog.rating);
+            let boxStarsHtml = '';
+            for (let s = 1; s <= 5; s++) {
+                const isFilled = s <= roundedBoxRating;
+                boxStarsHtml += `
+                    <button
+                        type="button"
+                        onclick="setRating('${box.id}', ${s})"
+                        class="star-btn p-1 text-sm focus:outline-none cursor-pointer"
+                        style="color: ${isFilled ? 'var(--star-on)' : 'var(--star-off)'};"
+                        title="Noter la boîte ${s}/5"
+                    >
+                        <i class="fa-solid fa-star"></i>
+                    </button>
+                `;
+            }
+
+            return { scenariosHtml, boxStarsHtml };
+        }
+
+        // Vue Fiches
+        function renderCardsView(boxes) {
+            return `
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                    ${boxes.map(box => {
+                        const prog = userProgress[box.id];
+                        const totalInBox = box.scenarios.length;
+                        const doneCount = prog.scenarios.filter(Boolean).length;
+                        const status = getBoxStatus(box.id);
+                        const { scenariosHtml, boxStarsHtml } = renderScenariosAndRating(box);
+
+                        let badgeClass = 'gbtn gbtn-neutral';
+                        let badgeIcon = 'fa-regular fa-square';
+                        if (status === 'done') {
+                            badgeClass = 'gbtn gbtn-emerald';
+                            badgeIcon = 'fa-solid fa-square-check';
+                        } else if (status === 'in-progress') {
+                            badgeClass = 'gbtn gbtn-amber';
+                            badgeIcon = 'fa-solid fa-square-minus';
+                        }
+
+                        return `
+                            <article class="glass-panel rounded-2xl overflow-hidden flex flex-col sm:flex-row">
+                                <!-- Boîte 3/4 centrée verticalement avec ombre douce au sol -->
+                                <div class="relative w-full sm:w-48 shrink-0 flex flex-col items-center justify-center py-6 px-4 border-b sm:border-b-0 sm:border-r" style="background-color: var(--bg-stage); border-color: var(--border-subtle);">
+                                    <span class="absolute top-3 left-3 text-[11px] font-bold px-2 py-0.5 rounded-lg glass-panel" style="color: var(--year-pill-text);">
+                                        ${box.year}
+                                    </span>
+
+                                    <div class="w-full flex items-center justify-center mt-2">
+                                        ${generatePhysicalBox(box, 'card')}
+                                    </div>
+                                </div>
+
+                                <!-- Détails fiche -->
+                                <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-3.5 min-w-0">
+                                    <div>
+                                        <div class="flex items-start justify-between gap-2.5">
+                                            <div class="min-w-0">
+                                                <span class="text-[11px] font-semibold block" style="color: var(--text-muted);">${box.edition}</span>
+                                                <h2 class="font-display text-lg font-bold leading-snug mt-0.5 break-words" style="color: var(--text-primary);">${box.title}</h2>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onclick="toggleFullBox('${box.id}')"
+                                                title="${status === 'done' ? 'Tout décocher' : 'Marquer terminée'}"
+                                                class="shrink-0 px-2.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer ${badgeClass}"
+                                            >
+                                                <i class="${badgeIcon}"></i>
+                                                <span>${doneCount}/${totalInBox}</span>
+                                            </button>
+                                        </div>
+
+                                        <div class="mt-3 space-y-2">
+                                            ${scenariosHtml}
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-3 border-t flex items-center justify-between gap-2" style="border-color: var(--border-subtle);">
+                                        <span class="text-[11px] font-semibold" style="color: var(--text-muted);">Note boîte</span>
+                                        <div class="flex items-center gap-1">
+                                            <div class="flex items-center">${boxStarsHtml}</div>
+                                            <span class="ml-1 text-xs font-bold" style="color: ${prog.rating > 0 ? 'var(--star-on)' : 'var(--text-muted)'};">
+                                                ${prog.rating > 0 ? prog.rating + '/5' : '–/5'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function renderGames() {
+            const container = document.getElementById('games-container');
+            const emptyState = document.getElementById('empty-state');
+            const filtered = getFilteredBoxes();
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            if (currentLayout === 'cards') {
+                container.innerHTML = renderCardsView(filtered);
+                return;
+            }
+
+            const shouldGroupByCategory =
+                currentFilter === 'all' &&
+                currentSearch.trim() === '' &&
+                (currentSort === 'year-asc' || currentSort === 'year-desc');
+
+            if (shouldGroupByCategory) {
+                const classics = filtered.filter(b => b.category === 'classic');
+                const kids = filtered.filter(b => b.category === 'kids');
+                const shorts = filtered.filter(b => b.category === 'short');
+
+                container.innerHTML =
+                    renderShelfSection('Aventures Classiques', classics) +
+                    renderShelfSection('Unlock! Kids & Mon Premier', kids) +
+                    renderShelfSection('Short Adventures', shorts);
+            } else {
+                container.innerHTML = renderShelfSection('', filtered);
+            }
+        }
+
+        // Modale Fiche
+        function openDetailModal(boxId) {
+            activeDetailBoxId = boxId;
+            renderDetailModal();
+            document.getElementById('box-detail-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDetailModal() {
+            activeDetailBoxId = null;
+            document.getElementById('box-detail-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function handleDetailBackdropClick(event) {
+            if (event.target.id === 'box-detail-modal') {
+                closeDetailModal();
+            }
+        }
+
+        function navigateDetailModal(delta) {
+            if (!activeDetailBoxId) return;
+            const visible = getFilteredBoxes();
+            const idx = visible.findIndex(b => b.id === activeDetailBoxId);
+            if (idx === -1) return;
+            const nextIdx = (idx + delta + visible.length) % visible.length;
+            activeDetailBoxId = visible[nextIdx].id;
+            renderDetailModal();
+        }
+
+        function renderDetailModal() {
+            if (!activeDetailBoxId) return;
+            const box = UNLOCK_CATALOG.find(b => b.id === activeDetailBoxId);
+            if (!box) return;
+
+            const prog = userProgress[box.id];
+            const totalInBox = box.scenarios.length;
+            const doneCount = prog.scenarios.filter(Boolean).length;
+            const status = getBoxStatus(box.id);
+            const { scenariosHtml, boxStarsHtml } = renderScenariosAndRating(box);
+
+            const visible = getFilteredBoxes();
+            const hasMultiple = visible.length > 1;
+
+            let badgeClass = 'gbtn gbtn-amber';
+            let badgeIcon = 'fa-regular fa-square';
+            let badgeText = `Valider la boîte (${doneCount}/${totalInBox})`;
+
+            if (status === 'done') {
+                badgeClass = 'gbtn gbtn-emerald';
+                badgeIcon = 'fa-solid fa-square-check';
+                badgeText = `Terminée (${doneCount}/${totalInBox})`;
+            } else if (status === 'in-progress') {
+                badgeClass = 'gbtn gbtn-amber';
+                badgeIcon = 'fa-solid fa-square-minus';
+                badgeText = `En cours (${doneCount}/${totalInBox})`;
+            }
+
+            const modalContent = document.getElementById('box-detail-content');
+            modalContent.innerHTML = `
+                <div class="flex items-center justify-between px-5 py-3.5 border-b" style="background-color: var(--bg-raised); border-color: var(--border-subtle);">
+                    <div class="flex items-center gap-2 text-xs" style="color: var(--text-secondary);">
+                        <span class="font-bold">${box.edition}</span>
+                        <span style="color: var(--border-strong);">·</span>
+                        <span>${box.year}</span>
+                    </div>
+
+                    <div class="flex items-center gap-1.5">
+                        ${hasMultiple ? `
+                            <button type="button" onclick="navigateDetailModal(-1)" title="Précédente (←)" class="gbtn gbtn-neutral w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer">
+                                <i class="fa-solid fa-chevron-left text-[11px]"></i>
+                            </button>
+                            <button type="button" onclick="navigateDetailModal(1)" title="Suivante (→)" class="gbtn gbtn-neutral w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer">
+                                <i class="fa-solid fa-chevron-right text-[11px]"></i>
+                            </button>
+                        ` : ''}
+                        <button type="button" onclick="closeDetailModal()" title="Fermer (Échap)" class="gbtn gbtn-rose ml-1 w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer">
+                            <i class="fa-solid fa-xmark text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row">
+                    <div class="md:w-72 shrink-0 flex flex-col justify-center py-8 px-6 border-b md:border-b-0 md:border-r" style="background-color: var(--bg-stage); border-color: var(--border-subtle);">
+                        ${generatePhysicalBox(box, 'modal')}
+                    </div>
+
+                    <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between gap-4 min-w-0">
+                        <div>
+                            <h2 class="font-display text-xl sm:text-2xl font-extrabold leading-snug" style="color: var(--text-primary);">${box.title}</h2>
+
+                            <div class="mt-3.5">
+                                <button
+                                    type="button"
+                                    onclick="toggleFullBox('${box.id}')"
+                                    class="px-3.5 py-2 rounded-xl text-xs font-bold inline-flex items-center gap-2 cursor-pointer ${badgeClass}"
+                                >
+                                    <i class="${badgeIcon}"></i>
+                                    <span>${badgeText}</span>
+                                </button>
+                            </div>
+
+                            <div class="mt-4 space-y-2">
+                                <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--text-muted);">Scénarios</p>
+                                ${scenariosHtml}
+                            </div>
+                        </div>
+
+                        <div class="pt-3.5 border-t flex items-center justify-between gap-2" style="border-color: var(--border-subtle);">
+                            <span class="text-xs font-semibold" style="color: var(--text-muted);">Note globale</span>
+                            <div class="flex items-center gap-1">
+                                <div class="flex items-center">${boxStarsHtml}</div>
+                                <span class="ml-1.5 font-display text-base font-bold" style="color: ${prog.rating > 0 ? 'var(--star-on)' : 'var(--text-muted)'};">
+                                    ${prog.rating > 0 ? prog.rating + ' / 5' : '– / 5'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleScenario(boxId, scenarioIndex) {
+            const current = userProgress[boxId].scenarios[scenarioIndex];
+            userProgress[boxId].scenarios[scenarioIndex] = !current;
+            persistProgress();
+
+            const box = UNLOCK_CATALOG.find(b => b.id === boxId);
+            if (!current) {
+                showToast(`« ${box.scenarios[scenarioIndex].name} » validé`);
+            }
+            renderAll();
+        }
+
+        function toggleFullBox(boxId) {
+            const status = getBoxStatus(boxId);
+            const newState = status !== 'done';
+            const box = UNLOCK_CATALOG.find(b => b.id === boxId);
+            userProgress[boxId].scenarios = box.scenarios.map(() => newState);
+            persistProgress();
+
+            showToast(newState ? `« ${box.title} » terminée` : `Progression effacée pour « ${box.title} »`, newState ? 'fa-check' : 'fa-rotate-left');
+            renderAll();
+        }
+
+        function setScenarioRating(boxId, scenarioIndex, rating, event) {
+            if (event) event.stopPropagation();
+
+            const prog = userProgress[boxId];
+            const current = prog.scenarioRatings[scenarioIndex];
+            prog.scenarioRatings[scenarioIndex] = (current === rating) ? 0 : rating;
+
+            const ratedScenarios = prog.scenarioRatings.filter(r => r > 0);
+            if (ratedScenarios.length > 0) {
+                const sum = ratedScenarios.reduce((a, b) => a + b, 0);
+                prog.rating = Math.round((sum / ratedScenarios.length) * 10) / 10;
+            } else {
+                prog.rating = 0;
+            }
+            persistProgress();
+
+            if (prog.scenarioRatings[scenarioIndex] > 0) {
+                showToast(`Note ${prog.scenarioRatings[scenarioIndex]}/5 enregistrée`, 'fa-star');
+            }
+            renderAll();
+        }
+
+        function setRating(boxId, rating) {
+            const current = userProgress[boxId].rating;
+            userProgress[boxId].rating = (current === rating) ? 0 : rating;
+            persistProgress();
+
+            if (userProgress[boxId].rating > 0) {
+                showToast(`Note boîte ${rating}/5 enregistrée`, 'fa-star');
+            }
+            renderAll();
         }
 
         function renderAll() {
             updateStats();
             renderGames();
-        }
-
-        // Gestion de l'image de fond sur la jaquette 3D
-        function applyBoxBackgroundImage(boxId, dataUrl) {
-            officialImagesCache[boxId] = dataUrl;
-            const img = document.getElementById(`box-bg-img-${boxId}`);
-            const overlay = document.getElementById(`box-bg-overlay-${boxId}`);
-            const icons = document.getElementById(`box-bg-icons-${boxId}`);
-            const centerIcon = document.getElementById(`box-center-icon-${boxId}`);
-            const removeBtn = document.getElementById(`remove-photo-btn-${boxId}`);
-
-            if (img) {
-                img.src = dataUrl;
-                img.classList.remove('hidden');
-            }
-            if (overlay) overlay.classList.remove('hidden');
-            if (icons) icons.classList.add('hidden');
-            if (centerIcon) centerIcon.classList.add('hidden');
-            if (removeBtn) {
-                removeBtn.classList.remove('hidden');
-                removeBtn.classList.add('flex');
+            if (activeDetailBoxId) {
+                renderDetailModal();
             }
         }
 
-        function onBoxBgError(boxId) {
-            removeCustomPhoto(boxId, true);
+        function handleBoxImageError(boxId) {
+            failedLocalAssets.add(boxId);
+            renderAll();
         }
 
-        function removeCustomPhoto(boxId, silent = false) {
-            delete officialImagesCache[boxId];
-            persistCovers();
-
-            const img = document.getElementById(`box-bg-img-${boxId}`);
-            const overlay = document.getElementById(`box-bg-overlay-${boxId}`);
-            const icons = document.getElementById(`box-bg-icons-${boxId}`);
-            const centerIcon = document.getElementById(`box-center-icon-${boxId}`);
-            const removeBtn = document.getElementById(`remove-photo-btn-${boxId}`);
-
-            if (img) {
-                img.removeAttribute('src');
-                img.classList.add('hidden');
-            }
-            if (overlay) overlay.classList.add('hidden');
-            if (icons) icons.classList.remove('hidden');
-            if (centerIcon) centerIcon.classList.remove('hidden');
-            if (removeBtn) {
-                removeBtn.classList.add('hidden');
-                removeBtn.classList.remove('flex');
-            }
-            if (!silent) {
-                showToast("Image supprimée, visuel 3D restauré.", "fa-trash-can text-rose-400");
-            }
-        }
-
-        // Import d'une photo individuelle sur une boîte
-        function handleCustomPhoto(event, boxId) {
-            const file = event.target.files?.[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                applyBoxBackgroundImage(boxId, e.target.result);
-                persistCovers();
-                showToast("Jaquette appliquée sur la boîte !");
-            };
-            reader.readAsDataURL(file);
-            event.target.value = '';
-        }
-
-        // Import en masse du dossier jaquettes_unlock généré par le script Python
-        function handleFolderUpload(event) {
-            const files = Array.from(event.target.files || []);
-            if (!files.length) return;
-
-            const validIds = new Set(UNLOCK_CATALOG.map(b => b.id));
-            let matchedCount = 0;
-            let processed = 0;
-
-            files.forEach(file => {
-                const stem = file.name.replace(/\.[^/.]+$/, '').toLowerCase();
-                if (!validIds.has(stem)) return;
-                matchedCount++;
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    applyBoxBackgroundImage(stem, e.target.result);
-                    processed++;
-                    if (processed === matchedCount) {
-                        persistCovers();
-                        showToast(`${matchedCount} jaquette(s) officielle(s) importée(s) !`);
-                    }
-                };
-                reader.readAsDataURL(file);
-            });
-
-            if (matchedCount === 0) {
-                showToast("Aucune image correspondante trouvée dans ce dossier.", "fa-circle-exclamation text-amber-400");
-            }
-            event.target.value = '';
-        }
-
-        // Export / Import JSON de sauvegarde
         function exportBackup() {
             const payload = {
                 version: 2,
@@ -1660,7 +1860,7 @@
             a.download = `unlock-tracker-backup-${new Date().toISOString().slice(0, 10)}.json`;
             a.click();
             URL.revokeObjectURL(url);
-            showToast("Sauvegarde JSON téléchargée !");
+            showToast("Sauvegarde téléchargée", "fa-download");
         }
 
         function importBackup(event) {
@@ -1683,16 +1883,15 @@
                     });
                     persistProgress();
                     renderAll();
-                    showToast("Sauvegarde restaurée avec succès !");
+                    showToast("Sauvegarde restaurée");
                 } catch (err) {
-                    showToast("Fichier JSON invalide.", "fa-circle-exclamation text-rose-400");
+                    showToast("Fichier JSON invalide", "fa-circle-exclamation");
                 }
             };
             reader.readAsText(file);
             event.target.value = '';
         }
 
-        // Modale de réinitialisation
         function openResetModal() {
             document.getElementById('reset-modal').classList.remove('hidden');
         }
@@ -1713,7 +1912,7 @@
             persistProgress();
             closeResetModal();
             renderAll();
-            showToast("Progression et notes réinitialisées.", "fa-rotate-left text-amber-400");
+            showToast("Progression réinitialisée", "fa-rotate-left");
         }
 
         function clearSearch() {
@@ -1724,51 +1923,59 @@
             renderAll();
         }
 
-        // Initialisation des événements au chargement
         document.addEventListener('DOMContentLoaded', () => {
+            updateThemeButton();
             initState();
+            styleLayoutButtons();
+            styleFilterButtons();
             renderAll();
 
-            // Recherche
             const searchInput = document.getElementById('search-input');
             const clearBtn = document.getElementById('clear-search-btn');
             searchInput.addEventListener('input', (e) => {
                 currentSearch = e.target.value;
-                if (currentSearch.trim() !== '') {
-                    clearBtn.classList.remove('hidden');
-                } else {
-                    clearBtn.classList.add('hidden');
-                }
+                clearBtn.classList.toggle('hidden', currentSearch.trim() === '');
                 renderAll();
             });
 
-            // Tri
             document.getElementById('sort-select').addEventListener('change', (e) => {
                 currentSort = e.target.value;
                 renderGames();
             });
 
-            // Filtres
-            const filterBtns = document.querySelectorAll('.filter-btn');
-            filterBtns.forEach(btn => {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    filterBtns.forEach(b => {
-                        b.classList.remove('active', 'bg-amber-400', 'text-slate-950', 'font-bold', 'shadow-sm');
-                        b.classList.add('bg-white/[0.04]', 'text-slate-300', 'font-semibold');
-                    });
-                    btn.classList.add('active', 'bg-amber-400', 'text-slate-950', 'font-bold', 'shadow-sm');
-                    btn.classList.remove('bg-white/[0.04]', 'text-slate-300', 'font-semibold');
-
                     currentFilter = btn.dataset.filter;
+                    styleFilterButtons();
                     renderAll();
                 });
             });
 
-            // Bouton réinitialiser les filtres (état vide)
             document.getElementById('reset-filters-btn').addEventListener('click', () => {
                 clearSearch();
-                const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
-                if (allBtn) allBtn.click();
+                currentFilter = 'all';
+                styleFilterButtons();
+                renderAll();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (activeDetailBoxId) {
+                    if (e.key === 'Escape') closeDetailModal();
+                    else if (e.key === 'ArrowLeft') navigateDetailModal(-1);
+                    else if (e.key === 'ArrowRight') navigateDetailModal(1);
+                } else if (e.key === 'Escape') {
+                    closeResetModal();
+                }
+            });
+
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    if (currentLayout === 'shelf') {
+                        renderGames();
+                    }
+                }, 150);
             });
         });
     </script>
